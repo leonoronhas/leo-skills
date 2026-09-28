@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Simplify'
+    short_description: 'Code simplification preserving functionality'
+    default_prompt: 'Apply $leo-simplify to this code.'

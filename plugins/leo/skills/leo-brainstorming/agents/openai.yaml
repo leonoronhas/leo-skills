@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Brainstorming'
+    short_description: 'Explore requirements and design before implementation'
+    default_prompt: 'Apply $leo-brainstorming to this idea.'

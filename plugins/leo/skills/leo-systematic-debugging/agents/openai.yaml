@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Systematic Debugging'
+    short_description: 'Root cause investigation before any fix'
+    default_prompt: 'Apply $leo-systematic-debugging to this bug.'
