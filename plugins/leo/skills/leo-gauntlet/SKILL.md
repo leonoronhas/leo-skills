@@ -19,11 +19,11 @@ Thin orchestrator. It holds no review logic; each stage is its own skill. Run fr
 
 ## Setup
 
-Create the report directory and git-exclude it, so reports never enter the tree hash or a commit:
+Create the report directory with a self-ignoring `.gitignore`, so reports never enter the tree hash or a commit, and nothing under `.git/` is written:
 
 ```bash
 mkdir -p .agents/gauntlet
-grep -qxF '.agents/gauntlet/' "$(git rev-parse --git-path info/exclude)" || echo '.agents/gauntlet/' >> "$(git rev-parse --git-path info/exclude)"
+printf '*\n' > .agents/gauntlet/.gitignore
 ```
 
 ## Stages

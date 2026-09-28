@@ -31,7 +31,7 @@ A value found in two places that disagree is a question, not a pick.
 
 ## Propose
 
-Fill every field of the plugin's `templates/leo.md` from the inspection. Show a table before writing anything:
+Fill every field of the template below from the inspection. Show a table before writing anything:
 
 | Field | Value | Source file |
 |---|---|---|
@@ -49,18 +49,18 @@ Do not run the proposed commands: `format` and `lint-fix` rewrite files, and `de
 
 ## Write
 
-Create `.agents/leo.md` from the plugin's `templates/leo.md` with the confirmed values. Keep the template's field names exactly.
+Create `.agents/leo.md` from the template below with the confirmed values. Keep the template's field names exactly.
 
 It never contains vulnerability details, secrets, tokens, or environment values. Risk areas and vendors are names only. If a value you were about to write looks like a credential, leave it out.
 
 ## Ignore
 
 - When `specs-plans-tracked: no`, append the `specs` and `plans` paths to `.gitignore`.
-- Always ensure `.agents/gauntlet/` is ignored through the local exclude file, so reports never reach a commit:
+- Always create `.agents/gauntlet/` with a self-ignoring `.gitignore`, so reports never reach a commit and nothing under `.git/` is written:
 
 ```bash
-exclude="$(git rev-parse --git-path info/exclude)"
-grep -qxF '.agents/gauntlet/' "$exclude" || printf '.agents/gauntlet/\n' >> "$exclude"
+mkdir -p .agents/gauntlet
+printf '*\n' > .agents/gauntlet/.gitignore
 ```
 
 ## Rerun
@@ -91,3 +91,67 @@ On a rerun with `standards-source` set, read the latest `main` sha the same way.
 ## Finish
 
 Report: the file written or changed, the fields left blank and why, commands that did not resolve, and any ignore entries added. Do not commit.
+
+## Template
+
+Write `.agents/leo.md` with exactly these headings and field names:
+
+````markdown
+# leo adapter
+
+Project facts for leo-* skills. Written by `leo-setup`; edit freely. Leave a field blank when it does not apply.
+
+## Commands
+- test:
+- lint:
+- lint-fix:
+- format:
+- typecheck:
+- build:
+- dev:
+- formatting-owner: <hook | command | none>
+
+## Git
+- base-branch:
+- worktree-dir: .worktrees/
+
+## Paths
+- specs: .agents/specs/
+- plans: .agents/plans/
+- specs-plans-tracked: <yes | no>
+- research: docs/research/
+- domain-terms: CONTEXT.md
+- adr-dir: docs/adr/
+
+## Rules
+- rules-files: AGENTS.md
+- standards-router:
+- standards-source:
+- rule-id-convention:
+
+## Issues
+- tracker: <linear | github | jira | none>
+- id-pattern:
+
+## Risk areas
+<!-- Names only, never vulnerability details. A change touching one requires leo-grilling. -->
+-
+
+## Stack
+- data-layer:
+- auth:
+- vendors:
+- frontend-runtime:
+- mobile-runtime:
+- bundle-budget-command:
+- index-check-command:
+
+## Live check
+- dev-url:
+- login: ask the user to log in
+- customer-facing:
+  -
+
+## Agents
+- subagent-model:
+````

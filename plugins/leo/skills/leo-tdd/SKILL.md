@@ -410,7 +410,7 @@ Can't check all boxes? You skipped TDD. Start over.
 
 ## Debugging Integration
 
-Bug found? Write failing test reproducing it. Follow TDD cycle. Test proves fix and prevents regression.
+Bug found? Run `leo-diagnosing-bugs` first; its minimised repro becomes the failing test. Follow TDD cycle. Test proves fix and prevents regression.
 
 Never fix bugs without a test.
 

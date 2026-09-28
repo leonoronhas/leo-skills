@@ -78,13 +78,14 @@ Use the `worktree-dir` field from `.agents/leo.md` (default `.worktrees/` at the
 git check-ignore -q "$WORKTREE_DIR"
 ```
 
-**If NOT ignored:** append it to the local exclude file. Do not edit or commit `.gitignore`.
+**If NOT ignored:** give the directory a self-ignoring `.gitignore`. Do not edit or commit the repo's own `.gitignore`.
 
 ```bash
-echo "$WORKTREE_DIR/" >> "$(git rev-parse --git-path info/exclude)"
+mkdir -p "$WORKTREE_DIR"
+printf '*\n' > "$WORKTREE_DIR/.gitignore"
 ```
 
-**Why critical:** Prevents accidentally committing worktree contents to the repository. `info/exclude` keeps the fix local, so it never lands in the shared history.
+**Why critical:** Prevents accidentally committing worktree contents to the repository. The self-ignoring file ignores itself too, so it never lands in the shared history, and nothing under `.git/` is written.
 
 #### Create the Worktree
 
@@ -145,7 +146,7 @@ Ready to implement <feature-name>
 | No native tool | Git worktree fallback (Step 1b) |
 | `worktree-dir` set | Use it (verify ignored) |
 | `worktree-dir` blank | Default `.worktrees/` |
-| Directory not ignored | Append to `info/exclude`; never commit `.gitignore` for it |
+| Directory not ignored | Self-ignoring `.gitignore` inside it; never edit the repo's `.gitignore` |
 | Permission error on create | Sandbox fallback, work in place |
 | Tests fail during baseline | Report failures + ask |
 | No dependency manifest | Skip dependency install |

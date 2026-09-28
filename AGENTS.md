@@ -4,7 +4,7 @@ This repo is a skill suite, not an app. Skills live in `plugins/leo/skills/leo-<
 
 ## Rules for editing this repo
 
-- Every project fact a skill needs comes from `.agents/leo.md` in the consuming repo (template: `plugins/leo/templates/leo.md`). Never hard-code a command, branch, path, vendor, or tracker.
+- Every project fact a skill needs comes from `.agents/leo.md` in the consuming repo (template: the `## Template` section of `plugins/leo/skills/leo-setup/SKILL.md`). Never hard-code a command, branch, path, vendor, or tracker.
 - A skill adapted from upstream carries one attribution line and its upstream appears in `THIRD_PARTY_NOTICES.md`.
 - Every skill that delegates to subagents carries this block verbatim; `scripts/check.mjs` fails if any copy differs:
 
