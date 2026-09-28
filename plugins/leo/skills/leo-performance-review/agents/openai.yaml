@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Performance Review'
+    short_description: 'Performance review: N+1, paging, bundle, caching, indexes'
+    default_prompt: 'Apply $leo-performance-review to this task.'
