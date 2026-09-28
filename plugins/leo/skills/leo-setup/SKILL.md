@@ -63,6 +63,35 @@ mkdir -p .agents/gauntlet
 printf '*\n' > .agents/gauntlet/.gitignore
 ```
 
+## Routing
+
+Skills only fire when the agent picks them; an obvious-looking bug gets fixed without one. The routing block makes the triggers always-on. Ask: "Add the leo routing block to AGENTS.md?" On yes:
+
+- Create `AGENTS.md` at the repo root if it does not exist.
+- Insert the block below, or replace the existing block between the markers on a rerun. Leave the rest of the file untouched.
+- Claude Code reads `CLAUDE.md`, not `AGENTS.md`. If `CLAUDE.md` is missing, create it containing `@AGENTS.md`. If it exists and neither imports nor links `AGENTS.md`, append a line `@AGENTS.md`.
+
+```markdown
+<!-- leo:routing -->
+## leo skills
+
+Project facts live in `.agents/leo.md`. Use the matching leo-* skill whenever a row applies.
+
+| Trigger | Skill |
+|---|---|
+| Any bug, regression, error, crash, failing test, or wrong, broken, or slow behavior: first, before reading or editing code | `leo-diagnosing-bugs` |
+| Root-cause work once `leo-diagnosing-bugs` has a red feedback loop | `leo-systematic-debugging` |
+| Before a feature, behavior change, or UI | `leo-brainstorming` |
+| A plan or decision touching a `Risk areas` entry | `leo-grilling` |
+| Spec exists, multi-step work ahead | `leo-writing-plans` |
+| Plan exists, execute it | `leo-executing-plans` |
+| Writing or changing code | `leo-tdd` |
+| Before opening a PR | `leo-gauntlet` |
+| Before claiming done, fixed, or passing | `leo-trust-but-verify` |
+| Wrapping up a branch | `leo-finishing-branch` |
+<!-- /leo:routing -->
+```
+
 ## Rerun
 
 When `.agents/leo.md` already exists, treat it as the baseline. Run Inspect and Propose, then show a diff between the file and the proposed one. Ask before overwriting. Fields the user edited by hand and inspection did not contradict stay as they are.
@@ -90,7 +119,7 @@ On a rerun with `standards-source` set, read the latest `main` sha the same way.
 
 ## Finish
 
-Report: the file written or changed, the fields left blank and why, commands that did not resolve, and any ignore entries added. Do not commit.
+Report: the files written or changed (including `AGENTS.md`/`CLAUDE.md` for routing), the fields left blank and why, commands that did not resolve, and any ignore entries added. Do not commit.
 
 ## Template
 

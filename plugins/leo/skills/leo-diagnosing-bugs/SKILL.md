@@ -1,6 +1,6 @@
 ---
 name: leo-diagnosing-bugs
-description: The FIRST skill to use for any bug, regression, error, failing test, or broken, throwing, failing, or slow behavior, before any other skill (including leo-systematic-debugging and leo-tdd). Builds a red feedback loop, then diagnoses. Use when the user says "diagnose"/"debug this" or reports something wrong.
+description: Use BEFORE reading or editing any code whenever the user reports a bug, regression, error, crash, failing test, or wrong, broken, or slow behavior, even when the fix looks obvious. The first step for every bug, ahead of leo-systematic-debugging and leo-tdd. Builds a red feedback loop that reproduces the bug, then diagnoses and hands the fix to leo-tdd.
 ---
 
 # Diagnosing Bugs

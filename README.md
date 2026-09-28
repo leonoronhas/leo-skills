@@ -50,7 +50,8 @@ Run `leo-setup` once per repo. It inspects the repo, shows a field table with ea
 
 - Always asks for risk areas (names only) and customer-facing globs.
 - Never runs the proposed commands; it only checks they resolve.
-- Adds `.agents/gauntlet/` to the local git exclude, so reports never reach a commit.
+- Creates `.agents/gauntlet/` with a self-ignoring `.gitignore`, so reports never reach a commit.
+- Offers to add a routing block to `AGENTS.md` (and `@AGENTS.md` to `CLAUDE.md`). Say yes: skills fire only when the agent picks them, and without the block an obvious-looking bug gets fixed without `leo-diagnosing-bugs`.
 - Does not commit.
 - Rerun after project facts change: it diffs against the existing file and asks before overwriting.
 
