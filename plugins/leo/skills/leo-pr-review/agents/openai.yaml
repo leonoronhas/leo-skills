@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo PR Review'
+    short_description: 'Review pull requests against standards and issue specs'
+    default_prompt: 'Apply $leo-pr-review to this task.'

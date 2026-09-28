@@ -1,0 +1,350 @@
+name: Leo PR pre-review
+
+on:
+    pull_request_target:
+        # Set this to your base branch.
+        branches: [main]
+        types: [opened, synchronize, reopened, ready_for_review, converted_to_draft, closed]
+
+concurrency:
+    group: leo-pr-review-${{ github.event.pull_request.number }}
+    cancel-in-progress: true
+
+# This workflow is advice, never a gate. Nothing in it is allowed to report a failure: a reviewer
+# that cannot run must not read as a pull request that cannot merge. Every step therefore carries
+# continue-on-error, and what actually happened is reported by the status step and rendered into the
+# comment rather than inferred from a job result.
+jobs:
+    review:
+        if: >-
+            vars.LEO_PR_REVIEW_ENABLED == 'true' &&
+            github.event.action != 'closed' &&
+            github.event.pull_request.draft == false &&
+            github.event.pull_request.head.repo.full_name == github.repository
+        runs-on: ubuntu-latest
+        timeout-minutes: 20
+        permissions:
+            contents: read
+            issues: read
+            pull-requests: read
+        outputs:
+            skip_reason: ${{ steps.context.outputs.skip_reason }}
+            skills: ${{ steps.context.outputs.skills }}
+            review_status: ${{ steps.status.outputs.review_status }}
+        steps:
+            - name: Check out the trusted base with complete history
+              continue-on-error: true
+              uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+              with:
+                  ref: ${{ github.event.pull_request.base.sha }}
+                  fetch-depth: 0
+                  persist-credentials: false
+
+            - name: Verify the proposed head object
+              continue-on-error: true
+              env:
+                  HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+              run: |
+                  git cat-file -e "$HEAD_SHA^{commit}"
+                  test "$(git rev-parse "$HEAD_SHA^{commit}")" = "$HEAD_SHA"
+
+            - name: Set up Node
+              continue-on-error: true
+              uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+              with:
+                  node-version: 24
+
+            # The reviews already spent live in the status comment's marker, because that comment is
+            # the only thing this workflow leaves behind between runs.
+            - name: Count the reviews already published
+              id: budget
+              continue-on-error: true
+              uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+              with:
+                  github-token: ${{ github.token }}
+                  script: |
+                      const { pathToFileURL } = require('node:url');
+                      const publisher = await import(
+                        pathToFileURL(`${process.env.GITHUB_WORKSPACE}/.github/leo-pr-review/publish-review.mjs`).href,
+                      );
+
+                      const comments = await github.paginate(github.rest.issues.listComments, {
+                        ...context.repo,
+                        issue_number: context.issue.number,
+                        per_page: 100,
+                      });
+
+                      core.setOutput('reviews_used', publisher.readReviewsUsed(comments));
+
+            - name: Prepare review context
+              id: context
+              continue-on-error: true
+              env:
+                  BASE_SHA: ${{ github.event.pull_request.base.sha }}
+                  HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+                  HEAD_REF: ${{ github.event.pull_request.head.ref }}
+                  REVIEWS_USED: ${{ steps.budget.outputs.reviews_used }}
+                  ISSUE_ID_PATTERN: ${{ vars.ISSUE_ID_PATTERN }}
+                  LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+                  GITHUB_TOKEN: ${{ github.token }}
+              run: |
+                  printf '%s\n' '.codex-review/' >> .git/info/exclude
+                  node .github/leo-pr-review/prepare-context.mjs
+
+            - name: Require the OpenAI key
+              continue-on-error: true
+              if: steps.context.outputs.should_review == 'true'
+              env:
+                  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+              run: test -n "$OPENAI_API_KEY"
+
+            # The action is pinned by SHA and so is the CLI it installs (codex-version), so every
+            # review runs against a known reviewer on a job that reads this repository's code and
+            # policy. Bump deliberately. A pinned version can still fail to install when npm skips
+            # an optional dependency; a retry fixes that.
+            - name: Run Codex
+              id: codex
+              continue-on-error: true
+              if: steps.context.outputs.should_review == 'true'
+              uses: openai/codex-action@52fe01ec70a42f454c9d2ebd47598f9fd6893d56 # v1
+              with:
+                  openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+                  codex-version: 0.149.0
+                  prompt-file: .github/leo-pr-review/review-prompt.md
+                  codex-args: '["--ephemeral", "--output-schema", ".github/leo-pr-review/review-output.schema.json", "-c", "shell_environment_policy.inherit=core", "-c", "shell_environment_policy.exclude=[\"OPENAI_API_KEY\",\"LINEAR_API_KEY\",\"GITHUB_TOKEN\",\"GH_TOKEN\"]"]'
+                  effort: ${{ steps.context.outputs.effort }}
+                  sandbox: read-only
+                  safety-strategy: read-only
+
+            - name: Validate finding locations against the trusted diff
+              id: validate
+              continue-on-error: true
+              if: steps.context.outputs.should_review == 'true'
+              env:
+                  BASE_SHA: ${{ github.event.pull_request.base.sha }}
+                  HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+                  CODEX_FINAL_MESSAGE: ${{ steps.codex.outputs.final-message }}
+                  REVIEW_OUTPUT_FILE: .codex-review/findings.json
+              run: node .github/leo-pr-review/validate-output.mjs
+
+            # Ship the findings to the publish job as an artifact, not a job output: GitHub drops any
+            # output whose value matches a registered secret, silently losing the review.
+            - name: Upload the validated findings for the publisher
+              continue-on-error: true
+              if: steps.context.outputs.should_review == 'true' && steps.validate.outcome == 'success'
+              uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+              with:
+                  name: codex-review-findings
+                  path: .codex-review/findings.json
+                  # The payload lives in a dot directory (git-excluded so it never pollutes the
+                  # reviewed diff); upload-artifact@v4 drops hidden paths by default, so opt in or
+                  # the artifact ships empty and findings vanish.
+                  include-hidden-files: true
+                  if-no-files-found: error
+                  retention-days: 1
+
+            - name: Report what the review produced
+              id: status
+              if: always()
+              continue-on-error: true
+              env:
+                  BUDGET_SPENT: ${{ steps.context.outputs.budget_spent }}
+                  CONTEXT_OUTCOME: ${{ steps.context.outcome }}
+                  SHOULD_REVIEW: ${{ steps.context.outputs.should_review }}
+                  CODEX_OUTCOME: ${{ steps.codex.outcome }}
+                  VALIDATE_OUTCOME: ${{ steps.validate.outcome }}
+              run: |
+                  # Name the step that failed so the status comment can too — one shared "unavailable"
+                  # once hid a sudo-verify failure and a validation crash behind the same sentence.
+                  if [ "$BUDGET_SPENT" = 'true' ]; then
+                      status=exhausted
+                  elif [ "$CONTEXT_OUTCOME" != 'success' ]; then
+                      status=context-failed
+                  elif [ "$SHOULD_REVIEW" != 'true' ]; then
+                      status=skipped
+                  elif [ "$CODEX_OUTCOME" != 'success' ]; then
+                      status=codex-failed
+                  elif [ "$VALIDATE_OUTCOME" != 'success' ]; then
+                      status=validate-failed
+                  else
+                      status=reviewed
+                  fi
+                  echo "review_status=$status" >> "$GITHUB_OUTPUT"
+
+    publish:
+        needs: review
+        if: >-
+            always() &&
+            vars.LEO_PR_REVIEW_ENABLED == 'true' &&
+            needs.review.result != 'skipped'
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        permissions:
+            contents: read
+            issues: write
+            pull-requests: write
+        steps:
+            - name: Check out the trusted base for the publisher
+              continue-on-error: true
+              uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+              with:
+                  ref: ${{ github.event.pull_request.base.sha }}
+                  sparse-checkout: .github/leo-pr-review
+                  persist-credentials: false
+
+            # The review job wrote the findings here; a missing artifact (skip, or a failed review)
+            # is fine — this step swallows it and publish reads an empty payload for those states.
+            - name: Download the validated findings
+              continue-on-error: true
+              uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+              with:
+                  name: codex-review-findings
+                  path: .codex-review
+
+            - name: Comment the findings on the diff
+              continue-on-error: true
+              uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+              env:
+                  REVIEW_FINDINGS_FILE: .codex-review/findings.json
+                  REVIEW_STATUS: ${{ needs.review.outputs.review_status }}
+                  SKIP_REASON: ${{ needs.review.outputs.skip_reason }}
+                  REVIEW_SKILLS: ${{ needs.review.outputs.skills }}
+                  REVIEWED_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+              with:
+                  github-token: ${{ github.token }}
+                  script: |
+                      const { pathToFileURL } = require('node:url');
+                      const publisher = await import(
+                        pathToFileURL(`${process.env.GITHUB_WORKSPACE}/.github/leo-pr-review/publish-review.mjs`).href,
+                      );
+
+                      const { owner, repo } = context.repo;
+                      const pullNumber = context.issue.number;
+                      const headSha = process.env.REVIEWED_HEAD_SHA;
+                      const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
+
+                      const { data: pullRequest } = await github.rest.pulls.get({
+                        owner,
+                        repo,
+                        pull_number: pullNumber,
+                      });
+                      if (pullRequest.head.sha !== headSha) return;
+
+                      let state = process.env.REVIEW_STATUS || 'unavailable';
+                      let result = { findings: [], spec_status: 'verified', spec_note: '' };
+                      if (state === 'reviewed') {
+                        // review_status is 'reviewed' only when Codex and validation both
+                        // succeeded, so an empty payload is findings withheld or lost in transit,
+                        // not a reviewer that produced nothing — say so, never "invalid".
+                        const raw = publisher.readReviewFindings(process.env.REVIEW_FINDINGS_FILE);
+                        if (raw.trim() === '') {
+                          state = 'withheld';
+                        } else {
+                          try {
+                            const parsed = JSON.parse(raw);
+                            if (Array.isArray(parsed?.findings)) result = parsed;
+                            else state = 'invalid';
+                          } catch {
+                            state = 'invalid';
+                          }
+                        }
+                      }
+
+                      const issueComments = await github.paginate(github.rest.issues.listComments, {
+                        owner,
+                        repo,
+                        issue_number: pullNumber,
+                        per_page: 100,
+                      });
+                      const previous = publisher.findStatusComment(issueComments);
+                      // Only a review that actually ran spends one of the pull request's two: a
+                      // skip, a failure, or a spent budget leaves the tally where it was.
+                      const reviewsUsed =
+                        publisher.parseReviewsUsed(previous?.body) + (state === 'reviewed' ? 1 : 0);
+                      const skills = (process.env.REVIEW_SKILLS || '').split(',').filter(Boolean);
+
+                      // Only a successful review knows what belongs on the diff. A skipped or failed
+                      // run leaves the previous run's threads alone rather than deleting evidence it
+                      // cannot replace.
+                      const findings = state === 'reviewed' ? result.findings : [];
+                      const unanchored = [];
+
+                      if (state === 'reviewed') {
+                        const reviewComments = await github.paginate(github.rest.pulls.listReviewComments, {
+                          owner,
+                          repo,
+                          pull_number: pullNumber,
+                          per_page: 100,
+                        });
+                        // The planner needs every comment, not just ours: replies are how it knows
+                        // which threads a human joined and must not be deleted.
+                        const plan = publisher.planReviewComments(findings, reviewComments);
+
+                        for (const commentId of plan.delete) {
+                          await github.rest.pulls.deleteReviewComment({ owner, repo, comment_id: commentId });
+                        }
+
+                        if (plan.create.length > 0) {
+                          const pending = plan.create.map(publisher.toReviewComment);
+                          try {
+                            await github.rest.pulls.createReview({
+                              owner,
+                              repo,
+                              pull_number: pullNumber,
+                              commit_id: headSha,
+                              event: 'COMMENT',
+                              body: publisher.renderReviewBody(headSha),
+                              comments: pending,
+                            });
+                          } catch (error) {
+                            // One rejected location fails the whole batch, so retry per comment and
+                            // let the summary carry whatever GitHub still refuses.
+                            core.warning(`Batched review failed: ${error.message}`);
+                            for (const [index, comment] of pending.entries()) {
+                              try {
+                                await github.rest.pulls.createReviewComment({
+                                  owner,
+                                  repo,
+                                  pull_number: pullNumber,
+                                  commit_id: headSha,
+                                  ...comment,
+                                });
+                              } catch (commentError) {
+                                core.warning(
+                                  `Inline comment failed at ${comment.path}:${comment.line}: ${commentError.message}`,
+                                );
+                                unanchored.push(plan.create[index]);
+                              }
+                            }
+                          }
+                        }
+                      }
+
+                      const body = publisher.renderStatusComment({
+                        headSha,
+                        state,
+                        findings,
+                        unanchored,
+                        specStatus: result.spec_status,
+                        specNote: result.spec_note,
+                        skipReason: process.env.SKIP_REASON,
+                        runUrl,
+                        reviewsUsed,
+                        skills,
+                      });
+
+                      if (previous) {
+                        await github.rest.issues.updateComment({
+                          owner,
+                          repo,
+                          comment_id: previous.id,
+                          body,
+                        });
+                      } else {
+                        await github.rest.issues.createComment({
+                          owner,
+                          repo,
+                          issue_number: pullNumber,
+                          body,
+                        });
+                      }

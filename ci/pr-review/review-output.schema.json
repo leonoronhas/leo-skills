@@ -1,0 +1,33 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "findings": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "severity": {
+                        "type": "string",
+                        "enum": ["bug", "risk", "question"]
+                    },
+                    "path": { "type": "string", "minLength": 1, "maxLength": 240 },
+                    "line": { "type": "integer", "minimum": 1 },
+                    "end_line": { "type": ["integer", "null"], "minimum": 1 },
+                    "problem": { "type": "string", "minLength": 1, "maxLength": 180 },
+                    "fix": { "type": "string", "minLength": 1, "maxLength": 180 },
+                    "suggestion": { "type": ["string", "null"], "minLength": 1, "maxLength": 1200 }
+                },
+                "required": ["severity", "path", "line", "end_line", "problem", "fix", "suggestion"]
+            }
+        },
+        "spec_status": {
+            "type": "string",
+            "enum": ["verified", "partial", "unavailable"]
+        },
+        "spec_note": { "type": "string", "maxLength": 180 }
+    },
+    "required": ["findings", "spec_status", "spec_note"]
+}
