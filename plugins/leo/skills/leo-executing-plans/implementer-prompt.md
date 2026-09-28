@@ -12,6 +12,9 @@ Dispatch a subagent:
 
     Read `.agents/leo.md` first. If it does not exist, stop and report NEEDS_CONTEXT.
 
+    If you hit a bug, failing test, or broken behavior you did not expect, run
+    `leo-diagnosing-bugs` first, before any fix.
+
     ## Task Description
 
     Read your task brief first: [BRIEF_FILE]

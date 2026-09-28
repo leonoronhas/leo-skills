@@ -10,7 +10,7 @@ Evidence-first engineering skills for coding agents. Install, run `leo-setup` on
 | Setup | `leo-setup` |
 | Think | `leo-brainstorming`, `leo-grilling`, `leo-domain-modeling`, `leo-codebase-design`, `leo-prototype`, `leo-research` |
 | Plan | `leo-writing-plans` |
-| Build | `leo-executing-plans`, `leo-tdd`, `leo-systematic-debugging`, `leo-simplify`, `leo-worktrees`, `leo-resolving-merge-conflicts` |
+| Build | `leo-executing-plans`, `leo-tdd`, `leo-diagnosing-bugs`, `leo-systematic-debugging`, `leo-simplify`, `leo-worktrees`, `leo-resolving-merge-conflicts` |
 | Review | `leo-gauntlet`, `leo-code-review`, `leo-security-review`, `leo-performance-review`, `leo-live-check`, `leo-receiving-review`, `leo-pr-review` |
 | Verify | `leo-trust-but-verify` |
 | Ship | `leo-finishing-branch`, `leo-handoff` |
@@ -66,7 +66,9 @@ Run `leo-setup` once per repo. It inspects the repo, shows a field table with ea
 | 4 | `leo-gauntlet` | Full pre-merge gate; writes a report keyed to the working tree. |
 | 5 | `leo-finishing-branch` | Offers merge, pull request, keep, or discard. A PR needs a passing gauntlet report. |
 
-Other skills (`leo-tdd`, `leo-systematic-debugging`, `leo-grilling`, and so on) are used where they apply; see the roster above.
+**Bugs come first.** For any bug, regression, error, failing test, or broken or slow behavior, `leo-diagnosing-bugs` runs before anything else. `leo-systematic-debugging` runs only after it has produced a red feedback loop.
+
+Other skills (`leo-tdd`, `leo-grilling`, and so on) are used where they apply; see the roster above.
 
 ## Gauntlet
 

@@ -1,6 +1,6 @@
 ---
 name: leo-systematic-debugging
-description: Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes.
+description: Use after leo-diagnosing-bugs has produced a red feedback loop, to find the root cause of a bug, test failure, or unexpected behavior before proposing fixes. Never the first skill for a bug.
 ---
 
 # Systematic Debugging
@@ -10,6 +10,8 @@ description: Use when encountering any bug, test failure, or unexpected behavior
 ## Before you start
 
 Read `.agents/leo.md` first. If it does not exist, run `leo-setup`, then continue.
+
+Run this only after `leo-diagnosing-bugs` has produced a red feedback loop. If none exists, stop and run `leo-diagnosing-bugs` first.
 
 ## Overview
 

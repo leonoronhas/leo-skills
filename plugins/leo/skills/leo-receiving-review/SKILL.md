@@ -32,7 +32,7 @@ WHEN receiving review feedback:
 6. IMPLEMENT: One item at a time, test each
 ```
 
-Reproduce means: write or run the failing case, run the cited command, or read the cited lines and their callers. A finding you could not reproduce is reported as unverified, not implemented on faith.
+Reproduce means: write or run the failing case, run the cited command, or read the cited lines and their callers. A finding you could not reproduce is reported as unverified, not implemented on faith. A finding that is a bug goes to `leo-diagnosing-bugs` first.
 
 ## Forbidden Responses
 

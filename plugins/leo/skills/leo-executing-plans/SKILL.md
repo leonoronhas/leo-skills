@@ -11,6 +11,8 @@ description: Use when executing an implementation plan with independent tasks in
 
 Read `.agents/leo.md` first. If it does not exist, run `leo-setup`, then continue.
 
+A bug surfaced mid-task (yours, an implementer's, or a reviewer's) goes to `leo-diagnosing-bugs` first, before any fix dispatch.
+
 Execute a plan by dispatching a fresh implementer subagent per task, a task review (spec compliance + code quality) after each, and integrating the results yourself: you review every diff and you commit.
 
 **Why subagents:** They get isolated context. By crafting their instructions precisely, you keep them focused, and you keep your own context for coordination. They never inherit your session's history; you build exactly what they need.

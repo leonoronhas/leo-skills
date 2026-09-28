@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Diagnosing Bugs'
+    short_description: 'First skill for any bug: build a red loop, then fix'
+    default_prompt: 'Apply $leo-diagnosing-bugs to this task.'

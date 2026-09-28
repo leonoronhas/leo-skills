@@ -21,6 +21,7 @@ import {
     renderFindingBody,
     renderReviewBody,
     renderStatusComment,
+    reviewSummaryPrompt,
     toReviewComment
 } from './publish-review.mjs'
 
@@ -544,7 +545,8 @@ test('carries a copy-pasteable agent prompt on every finding', () => {
 
     assert.match(body, /Prompt to hand an agent:\n```text\n/)
     assert.match(body, /in src\/changed\.ts at lines 12-15/)
-    assert.match(body, /leo-systematic-debugging/)
+    assert.match(body, /with the leo-diagnosing-bugs skill/)
+    assert.doesNotMatch(body, /leo-systematic-debugging/)
     assert.match(body, /leo-tdd/)
     assert.match(body, /leo-trust-but-verify/)
 
@@ -553,6 +555,13 @@ test('carries a copy-pasteable agent prompt on every finding', () => {
     const backticked = renderFindingBody({ ...bug, problem: 'Calls `reset()` twice' })
     const prompt = backticked.slice(backticked.indexOf('```text'))
     assert.equal(prompt.split('```').length, 3)
+})
+
+test('routes bug confirmation through leo-diagnosing-bugs in the close-out prompt', () => {
+    const prompt = reviewSummaryPrompt(['leo-trust-but-verify']).join('\n')
+
+    assert.match(prompt, /with the leo-diagnosing-bugs skill/)
+    assert.doesNotMatch(prompt, /leo-systematic-debugging/)
 })
 
 test('reads the findings file, or an empty string when it is absent', async () => {

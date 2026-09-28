@@ -133,7 +133,7 @@ export function findingPrompt(finding) {
         `Reported problem: ${finding.problem}.`,
         `Proposed fix: ${finding.fix}.`,
         '',
-        'Follow the repository rules (.agents/leo.md and AGENTS.md). Confirm the finding against the real code first with the leo-systematic-debugging skill: if it does not hold, reply in the review thread with the evidence and change nothing. If it holds, fix it with leo-tdd, then run leo-trust-but-verify and report the command output that proves the fix.'
+        'Follow the repository rules (.agents/leo.md and AGENTS.md). Confirm the finding against the real code first with the leo-diagnosing-bugs skill: if it does not hold, reply in the review thread with the evidence and change nothing. If it holds, fix it with leo-tdd, then run leo-trust-but-verify and report the command output that proves the fix.'
     ]
 }
 
@@ -249,7 +249,7 @@ export function reviewSummaryPrompt(skills) {
         'Close out the automated review on this pull request.',
         '',
         '1. Read every inline review comment and the pre-review summary comment on the pull request.',
-        '2. For each finding, confirm or refute it against the real code with the leo-systematic-debugging skill. Fix what holds with leo-tdd. Reply in the thread with what you did, or with the evidence that the finding does not hold.',
+        '2. For each finding, confirm or refute it against the real code with the leo-diagnosing-bugs skill. Fix what holds with leo-tdd. Reply in the thread with what you did, or with the evidence that the finding does not hold.',
         `3. Then run these skills, in order: ${skills.join(', ')}.`,
         '4. Report the commands you ran and their output. Anything you could not verify is reported as unverified.',
         '',

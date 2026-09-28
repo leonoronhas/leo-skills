@@ -11,6 +11,8 @@ description: Use before writing or changing any source code, and before creating
 
 Read `.agents/leo.md` first. If it does not exist, run `leo-setup`, then continue.
 
+A bug fix starts with `leo-diagnosing-bugs`; come here for its fix and regression test.
+
 ## Overview
 
 Write the test first. Watch it fail. Write minimal code to pass.
