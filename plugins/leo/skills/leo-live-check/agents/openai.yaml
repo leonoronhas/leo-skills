@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Live Check'
+    short_description: 'Exercise changed behavior against a running dev app'
+    default_prompt: 'Apply $leo-live-check to this task.'

@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Gauntlet'
+    short_description: 'Pre-PR gate: reviews, live check, verify, auto-fix'
+    default_prompt: 'Apply $leo-gauntlet to this task.'
