@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Extract one task's full text from a plan into a file the implementer reads
+# in one call, so the task text never passes through the parent's context.
+# A task starts at a heading "Task <N>" (any level) outside code fences and
+# ends at the next "Task <M>" heading.
+#
+# Usage: task-brief PLAN_FILE TASK_NUMBER
+# Writes <workspace>/task-<N>-brief.md and prints its path.
+set -euo pipefail
+
+if [ $# -ne 2 ]; then
+  echo "usage: task-brief PLAN_FILE TASK_NUMBER" >&2
+  exit 2
+fi
+
+plan=$1
+n=$2
+[ -f "$plan" ] || { echo "no such plan file: $plan" >&2; exit 2; }
+
+# Run through bash: extractors may strip exec bits from installed scripts.
+dir=$("${BASH:-bash}" "$(cd "$(dirname "$0")" && pwd)/plan-workspace" "$plan")
+out="$dir/task-${n}-brief.md"
+
+awk -v n="$n" '
+  /^```/ { infence = !infence }
+  !infence && /^#+[ \t]+Task[ \t]+[0-9]+/ {
+    intask = ($0 ~ ("^#+[ \t]+Task[ \t]+" n "([^0-9]|$)"))
+  }
+  intask { print }
+' "$plan" > "$out"
+
+if [ ! -s "$out" ]; then
+  rm -f "$out"
+  echo "task ${n} not found in ${plan} (no heading matching 'Task ${n}')" >&2
+  exit 3
+fi
+
+echo "wrote ${out}: $(wc -l < "$out" | tr -d ' ') lines"

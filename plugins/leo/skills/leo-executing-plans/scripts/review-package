@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# Write a review package (commit list, stat summary, net diff with extended
+# context) to one file a reviewer reads in a single call. Use the BASE
+# recorded before the task was dispatched, never HEAD~1: multi-commit tasks
+# would silently lose all but their last commit.
+#
+# With PATH arguments the package covers only those paths, so parallel tasks
+# that interleave commits each get a package of their own files.
+#
+# Usage: review-package PLAN_FILE BASE HEAD [PATH...]
+# Writes <workspace>/review-<base7>..<head7>[-<pathhash>].diff and prints its path.
+set -euo pipefail
+
+if [ $# -lt 3 ]; then
+  echo "usage: review-package PLAN_FILE BASE HEAD [PATH...]" >&2
+  exit 2
+fi
+
+plan=$1
+base=$2
+head=$3
+shift 3
+[ -f "$plan" ] || { echo "no such plan file: $plan" >&2; exit 2; }
+
+git rev-parse --verify --quiet "$base" >/dev/null || { echo "bad BASE: $base" >&2; exit 2; }
+git rev-parse --verify --quiet "$head" >/dev/null || { echo "bad HEAD: $head" >&2; exit 2; }
+
+# A wrong-branch HEAD gives an empty or unrooted range and a bogus package.
+git merge-base --is-ancestor "$base" "$head" || { echo "HEAD is not a descendant of BASE: ${base}..${head}" >&2; exit 3; }
+commits=$(git rev-list --count "${base}..${head}" -- "$@")
+[ "$commits" -gt 0 ] || { echo "empty commit range: ${base}..${head}" >&2; exit 3; }
+
+dir=$("${BASH:-bash}" "$(cd "$(dirname "$0")" && pwd)/plan-workspace" "$plan")
+suffix=""
+if [ $# -gt 0 ]; then
+  suffix="-$(printf '%s\n' "$@" | git hash-object --stdin | cut -c1-7)"
+fi
+out="$dir/review-$(git rev-parse --short "$base")..$(git rev-parse --short "$head")${suffix}.diff"
+
+{
+  echo "# Review package: ${base}..${head}"
+  echo
+  echo "## Commits"
+  git log --oneline "${base}..${head}" -- "$@"
+  echo
+  echo "## Files changed"
+  git diff --stat "${base}..${head}" -- "$@"
+  echo
+  echo "## Diff"
+  git diff -U10 "${base}..${head}" -- "$@"
+} > "$out"
+
+echo "wrote ${out}: ${commits} commit(s), $(wc -c < "$out" | tr -d ' ') bytes"

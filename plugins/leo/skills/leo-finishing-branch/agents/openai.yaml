@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Finishing Branch'
+    short_description: 'Merge, PR, keep, or discard a finished branch'
+    default_prompt: 'Apply $leo-finishing-branch to this task.'

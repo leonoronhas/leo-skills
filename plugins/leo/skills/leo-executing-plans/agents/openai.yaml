@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Executing Plans'
+    short_description: 'Run a plan task by task with subagents and review'
+    default_prompt: 'Apply $leo-executing-plans to this task.'
