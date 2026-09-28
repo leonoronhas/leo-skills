@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Writing Plans'
+    short_description: 'Create detailed implementation plans from specs'
+    default_prompt: 'Apply $leo-writing-plans to this task.'

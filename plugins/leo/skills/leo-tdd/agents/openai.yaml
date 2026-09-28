@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo TDD'
+    short_description: 'Test-first development with a failing test before code'
+    default_prompt: 'Apply $leo-tdd to this task.'

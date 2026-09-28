@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Trust But Verify'
+    short_description: 'Verify with fresh evidence before claiming done'
+    default_prompt: 'Apply $leo-trust-but-verify to this task.'
