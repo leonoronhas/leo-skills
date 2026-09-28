@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Research'
+    short_description: 'Research from primary sources into a Markdown note'
+    default_prompt: 'Apply $leo-research to this task.'

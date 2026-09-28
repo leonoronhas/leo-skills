@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Receiving Review'
+    short_description: 'Verify review findings before acting on them'
+    default_prompt: 'Apply $leo-receiving-review to this task.'

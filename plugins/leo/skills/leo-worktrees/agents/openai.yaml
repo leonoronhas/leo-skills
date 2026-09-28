@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Worktrees'
+    short_description: 'Set up an isolated git worktree for the work'
+    default_prompt: 'Apply $leo-worktrees to this task.'
