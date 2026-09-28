@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Grilling'
+    short_description: 'Relentless questioning to stress-test plans and decisions'
+    default_prompt: 'Apply $leo-grilling to this task.'

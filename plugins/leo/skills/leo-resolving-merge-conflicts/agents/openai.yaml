@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Resolving Merge Conflicts'
+    short_description: 'Resolve in-progress merge and rebase conflicts'
+    default_prompt: 'Apply $leo-resolving-merge-conflicts to this task.'
