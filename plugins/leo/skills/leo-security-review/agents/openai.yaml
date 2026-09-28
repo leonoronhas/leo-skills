@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Security Review'
+    short_description: 'Security review: authz, isolation, secrets, SSRF, webhooks'
+    default_prompt: 'Apply $leo-security-review to this task.'
