@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Code Review'
+    short_description: 'Pre-PR review: standards and spec, confidence-scored'
+    default_prompt: 'Apply $leo-code-review to this task.'
