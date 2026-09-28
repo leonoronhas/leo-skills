@@ -1,0 +1,14 @@
+{
+    "name": "leo-skills",
+    "owner": { "name": "Leo Santos", "url": "https://github.com/leonoronhas" },
+    "description": "Evidence-first engineering skills: plan, build test-first, review, live-check, and verify, driven by a per-repo adapter.",
+    "plugins": [
+        {
+            "name": "leo",
+            "source": "./plugins/leo",
+            "description": "24 skills from brainstorming to a pre-PR gauntlet, configured per repo by leo-setup.",
+            "category": "engineering",
+            "keywords": ["tdd", "code-review", "security", "performance", "planning", "verification"]
+        }
+    ]
+}
