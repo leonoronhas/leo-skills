@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Setup'
+    short_description: 'Write the project adapter every leo skill reads'
+    default_prompt: 'Apply $leo-setup to this task.'
