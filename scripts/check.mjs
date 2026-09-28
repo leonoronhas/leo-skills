@@ -18,7 +18,7 @@ const LEAKS = [
 const LEAK_EXEMPT = new Set(['scripts/check.mjs', 'tests/check.test.mjs'])
 const WALK_SKIP = new Set(['.git', 'node_modules'])
 // Files that live in the consuming repo, not beside the skill.
-const EXTERNAL_MD = new Set(['AGENTS.md', 'CLAUDE.md', 'README.md', 'CONTEXT.md', 'SKILL.md', 'CHANGELOG.md', 'THIRD_PARTY_NOTICES.md'])
+const EXTERNAL_MD = new Set(['AGENTS.md', 'CLAUDE.md', 'README.md', 'CONTEXT.md', 'SKILL.md', 'CHANGELOG.md', 'THIRD_PARTY_NOTICES.md', 'CONTEXT-MAP.md'])
 const NOT_SKILLS = new Set(['leo-skills'])
 const UPSTREAMS = [
     ['Superpowers', 'obra/superpowers'],

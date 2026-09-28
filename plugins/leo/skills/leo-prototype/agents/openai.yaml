@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Prototype'
+    short_description: 'Throwaway prototype to answer one design question'
+    default_prompt: 'Apply $leo-prototype to this task.'

@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Domain Modeling'
+    short_description: 'Build and sharpen the domain model: glossary and ADRs'
+    default_prompt: 'Apply $leo-domain-modeling to this task.'

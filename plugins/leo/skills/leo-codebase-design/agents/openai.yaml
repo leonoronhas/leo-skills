@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Codebase Design'
+    short_description: 'Deep module design vocabulary: seam, adapter, depth, leverage'
+    default_prompt: 'Apply $leo-codebase-design to this task.'
