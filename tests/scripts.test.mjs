@@ -73,6 +73,13 @@ test('verify fails on leftover __ scratch files', () => {
     assert.match(r.out, /src\/__probe\.js/)
 })
 
+test('verify fails when no check command is set, since nothing was proven', () => {
+    const root = repo()
+    const r = run(root, 'leo-trust-but-verify', 'verify', ['out.txt'])
+    assert.equal(r.code, 1, r.out)
+    assert.match(r.out, /no check command is set/)
+})
+
 test('verify strips backticks around a command', () => {
     const root = repo({ test: '`echo quoted`' })
     const r = run(root, 'leo-trust-but-verify', 'verify', ['out.txt'])

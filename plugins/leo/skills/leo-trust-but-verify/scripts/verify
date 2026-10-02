@@ -35,12 +35,14 @@ field() {
 }
 
 status=0
+ran=0
 for name in typecheck lint test build; do
   cmd=$(field "$name")
   if [ -z "$cmd" ]; then
     echo "skip $name (blank)"
     continue
   fi
+  ran=$((ran + 1))
   log=$(mktemp)
   bash -c "$cmd" > "$log" 2>&1
   code=$?
@@ -53,6 +55,11 @@ for name in typecheck lint test build; do
     status=1
   fi
 done
+
+if [ "$ran" -eq 0 ]; then
+  echo "FAIL no check command is set in $adapter; nothing was proven"
+  status=1
+fi
 
 scratch=$(git ls-files --others --exclude-standard | grep -E '(^|/)__' || true)
 if [ -n "$scratch" ]; then
