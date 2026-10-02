@@ -7,13 +7,15 @@ Evidence-first engineering skills for coding agents. Install, run `leo-setup` on
 <!-- leo:roster -->
 | Phase | Skills |
 |---|---|
-| Setup | `leo-setup` |
-| Think | `leo-brainstorming`, `leo-grilling`, `leo-domain-modeling`, `leo-codebase-design`, `leo-prototype`, `leo-research` |
+| Setup | `leo-setup`, `leo-verification-skill` |
+| Mode | `leo-mode` |
+| Think | `leo-explain`, `leo-brainstorming`, `leo-grilling`, `leo-domain-modeling`, `leo-codebase-design`, `leo-prototype`, `leo-research` |
 | Plan | `leo-writing-plans` |
-| Build | `leo-executing-plans`, `leo-tdd`, `leo-diagnosing-bugs`, `leo-systematic-debugging`, `leo-simplify`, `leo-worktrees`, `leo-resolving-merge-conflicts` |
+| Build | `leo-executing-plans`, `leo-tdd`, `leo-diagnosing-bugs`, `leo-simplify`, `leo-worktrees`, `leo-resolving-merge-conflicts` |
 | Review | `leo-gauntlet`, `leo-code-review`, `leo-security-review`, `leo-performance-review`, `leo-live-check`, `leo-receiving-review`, `leo-pr-review` |
 | Verify | `leo-trust-but-verify` |
 | Ship | `leo-finishing-branch`, `leo-handoff` |
+| Write | `leo-writing` |
 <!-- /leo:roster -->
 
 ## Install
@@ -67,7 +69,7 @@ Run `leo-setup` once per repo. It inspects the repo, shows a field table with ea
 | 4 | `leo-gauntlet` | Full pre-merge gate; writes a report keyed to the working tree. |
 | 5 | `leo-finishing-branch` | Offers merge, pull request, keep, or discard. A PR needs a passing gauntlet report. |
 
-**Bugs come first.** For any bug, regression, error, failing test, or broken or slow behavior, `leo-diagnosing-bugs` runs before anything else. `leo-systematic-debugging` runs only after it has produced a red feedback loop.
+**Bugs come first.** For any bug, regression, error, failing test, or broken or slow behavior, `leo-diagnosing-bugs` runs before anything else. It builds the red feedback loop, finds the root cause, and hands the fix to `leo-tdd`.
 
 Other skills (`leo-tdd`, `leo-grilling`, and so on) are used where they apply; see the roster above.
 
@@ -78,7 +80,7 @@ Stages run in this order, so reviews see final code.
 | # | Stage | Notes |
 |---|---|---|
 | 1 | `leo-simplify` | Runs first. |
-| 2 | `leo-code-review`, `leo-security-review`, `leo-performance-review` | One subagent each, in parallel, on the same diff. |
+| 2 | Review lanes: bugs, standards, spec, security, performance, tests | One reviewer per lane, in parallel, on the same diff. A cross-vendor verifier confirms or refutes each finding at `medium` or above. Security, performance, spec, and tests run only when the diff touches their area. |
 | 3 | `leo-live-check` | Customer-facing changes only. |
 | 4 | `leo-trust-but-verify` | Runs last; reruns the checks itself and returns the verdict. |
 
@@ -126,12 +128,17 @@ Runs on non-draft PRs from the same repo. Skips empty and docs-only diffs, and d
     Without Linear, `#N` GitHub issues are used through the built-in `GITHUB_TOKEN`.
 6. Merge to the base branch. It reviews PRs opened after that.
 
+## Versions
+
+Releases are listed in [CHANGELOG.md](CHANGELOG.md) and tagged `v<version>` on GitHub. The version lives in `plugins/leo/.claude-plugin/plugin.json`.
+
 ## Credits
 
 Some skills adapt MIT-licensed work; each adapted `SKILL.md` names its source. Skills marked **Original** are not adapted.
 
 - [Superpowers](https://github.com/obra/superpowers) by Jesse Vincent (MIT)
 - [MattPocock skills](https://github.com/mattpocock/skills) by Matt Pocock (MIT)
+- [pstack](https://github.com/backnotprop/pstack), mirror of Cursor's pstack by poteto (MIT)
 
 License texts: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 

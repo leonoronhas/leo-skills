@@ -32,6 +32,12 @@ interview.
 - **Do not act until they confirm.** Grilling ends at shared understanding, not at the last
   question. No code, no plan, no issue created until they say so.
 
+**Under `leo-mode`.** Nobody is waiting to answer, so grill the spec yourself or through an `other-vendor` subagent. Answer each question from the repo first. A question only the user can answer, about product, preference, or a `Risk areas` entry, goes to `gates.md` with your recommended answer as the default. Every other unresolved point becomes a logged ruling. The output format below is unchanged.
+
+<!-- leo:subagent-model -->
+**Subagent model.** Use `subagent-model` from `.agents/leo.md` when it is set. Otherwise use one tier below your own model in the same vendor family; if you are already on the smallest tier, or cannot name your own model, use your own model. Delegate only read-heavy, independent work; design, security judgment, and final verification stay with you.
+<!-- /leo:subagent-model -->
+
 Follow each answer where it leads before moving on. Resolve one branch of the decision tree at
 a time rather than sweeping all four rounds.
 

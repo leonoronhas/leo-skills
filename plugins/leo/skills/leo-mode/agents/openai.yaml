@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Mode'
+    short_description: 'Sticky mode: flows, multi-model panels, batched gates'
+    default_prompt: 'Apply $leo-mode to this task.'

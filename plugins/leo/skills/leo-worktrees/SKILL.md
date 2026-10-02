@@ -48,7 +48,7 @@ Has the user already indicated their worktree preference in your instructions? I
 
 > "Would you like me to set up an isolated worktree? It protects your current branch from changes."
 
-Honor any existing declared preference without asking. If the user declines consent, work in place and skip to Step 2.
+Honor any existing declared preference without asking. Under `leo-mode`, the mode itself is the consent: create the worktree without asking. If the user declines consent, work in place and skip to Step 2.
 
 ## Step 1: Create Isolated Workspace
 
@@ -101,22 +101,7 @@ cd "$path"
 
 ## Step 2: Project Setup
 
-Install dependencies with the setup the repo documents (its `rules-files` from `.agents/leo.md`, README, or CI config). If nothing is documented, auto-detect:
-
-```bash
-# Node.js
-if [ -f package.json ]; then npm install; fi
-
-# Rust
-if [ -f Cargo.toml ]; then cargo build; fi
-
-# Python
-if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-if [ -f pyproject.toml ]; then poetry install; fi
-
-# Go
-if [ -f go.mod ]; then go mod download; fi
-```
+Run the `install` command from `.agents/leo.md`. If it is blank, use the setup the repo documents (its `rules-files`, README, or CI config). If nothing is documented, leave dependencies uninstalled and report it; under `leo-mode`, that is a gate.
 
 If the `build` command in `.agents/leo.md` is set and the project needs a build before tests run, run it.
 
@@ -124,7 +109,7 @@ If the `build` command in `.agents/leo.md` is set and the project needs a build 
 
 Run the `test` command from `.agents/leo.md` to ensure the workspace starts clean. Run `typecheck` too when it is set.
 
-**If tests fail:** Report failures, ask whether to proceed or investigate.
+**If tests fail:** Report failures, ask whether to proceed or investigate. Under `leo-mode`, record the failing tests as a known-red baseline in `decisions.tsv` and continue. Later checks compare against that list, and the final report names every pre-existing failure.
 
 **If tests pass:** Report ready.
 
@@ -135,28 +120,3 @@ Worktree ready at <full-path>
 Tests passing (<N> tests, 0 failures)
 Ready to implement <feature-name>
 ```
-
-## Quick Reference
-
-| Situation | Action |
-|-----------|--------|
-| Already in linked worktree | Skip creation (Step 0) |
-| In a submodule | Treat as normal repo (Step 0 guard) |
-| Native worktree tool available | Use it (Step 1a) |
-| No native tool | Git worktree fallback (Step 1b) |
-| `worktree-dir` set | Use it (verify ignored) |
-| `worktree-dir` blank | Default `.worktrees/` |
-| Directory not ignored | Self-ignoring `.gitignore` inside it; never edit the repo's `.gitignore` |
-| Permission error on create | Sandbox fallback, work in place |
-| Tests fail during baseline | Report failures + ask |
-| No dependency manifest | Skip dependency install |
-
-## Common Rationalizations
-
-| Excuse | Reality |
-|--------|---------|
-| "I'm obviously not in a worktree - no need to check" | Run Step 0. Harness-created isolation and submodules both fool eyeballing; the detection commands settle it. |
-| "`git worktree add` is quicker than hunting for a native tool" | A native tool (e.g. `EnterWorktree`) owns placement, branching, and cleanup. Bypassing it is the #1 mistake - it creates phantom state your harness can't see or manage. |
-| "The worktree directory is surely ignored already" | Run `git check-ignore`. An unignored worktree directory commits the whole tree into the repo. |
-| "Any directory name works" | An explicit instruction beats the `worktree-dir` field, which beats the `.worktrees/` default. |
-| "The workspace is fresh - baseline tests can wait" | A dirty baseline makes every later failure ambiguous. Run the tests now; proceeding past failures is the user's call. |

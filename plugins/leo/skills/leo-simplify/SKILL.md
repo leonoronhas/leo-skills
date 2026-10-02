@@ -17,19 +17,12 @@ Simplify code while preserving exact behavior. No behavior changes — only clar
 
 **Core principle:** If a function needs a comment to explain its middle section, that section wants to be its own well-named function.
 
-## When to Use
-
-- Code review finds unnecessary complexity
-- Refactoring for readability (not behavior change)
-- Before adding features to complex areas
-- "This is hard to understand" — simplify first
-
 ## Rules (clarity over cleverness)
 
 1. **Descriptive names.** `pendingRenewals`, not `list`; `hasExpiredTrial(account)`, not `check(c)`.
 2. **Simplest thing that works.** No indirection, generics, or configurability for cases that don't exist.
 3. **Small, single-purpose units.** Extract middle sections to well-named functions.
-4. **Comments are rare.** Only for non-obvious _why_, business rules, external quirks, deliberate workarounds.
+4. **Comments follow `leo-writing`.**
 
 ## Preserve-Functionality Rules
 
@@ -37,6 +30,7 @@ Simplify code while preserving exact behavior. No behavior changes — only clar
 - **No API change** — public interfaces identical
 - **No performance regression** — verify with benchmarks if critical
 - **One change at a time** — each simplification verified independently
+- **Check before removing, extracting, or renaming.** "unused" code may be a feature flag, a new file can create circular imports, and a rename needs a codebase-wide grep for callers
 
 ## Simplification Patterns
 
@@ -68,13 +62,6 @@ The scoped check runs the `test` and `typecheck` commands from `.agents/leo.md`:
 ## Standards
 
 When `standards-router` in `.agents/leo.md` is set, read it, load only the files it routes to for this task, and cite rule IDs per `rule-id-convention` in findings and in the PR description. A deviation from a MUST rule names the rule and the reason where the deviation lives.
-
-## Red Flags
-
-- "Simplify" that changes behavior → STOP
-- Removing "unused" code that's actually a feature flag → Check first
-- Extracting to new file without checking imports → Circular deps risk
-- Renaming without grep across codebase → Breaks callers
 
 ## Integration
 

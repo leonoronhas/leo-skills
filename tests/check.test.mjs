@@ -12,6 +12,10 @@ const RULE = [
     '<!-- /leo:subagent-model -->',
 ].join('\n')
 
+const OPENAI = "interface:\n    display_name: 'A'\n    default_prompt: 'Apply $leo-a to this task.'\n"
+
+const CHANGELOG = '# Changelog\n\n## [1.2.3] - 2026-01-02\n\n### Added\n\n- A.\n\n## [1.2.2] - 2026-01-01\n\n- Old.\n'
+
 const SKILL = '---\nname: leo-a\ndescription: Does A.\n---\n\n# A\n\n**Original.**\n'
 
 function repo(overrides = {}) {
@@ -21,6 +25,9 @@ function repo(overrides = {}) {
         'AGENTS.md': `# Agents\n\n${RULE}\n`,
         'THIRD_PARTY_NOTICES.md': '# Notices\n',
         'plugins/leo/skills/leo-a/SKILL.md': SKILL,
+        'plugins/leo/skills/leo-a/agents/openai.yaml': OPENAI,
+        'plugins/leo/.claude-plugin/plugin.json': '{ "name": "leo", "version": "1.2.3" }\n',
+        'CHANGELOG.md': CHANGELOG,
         ...overrides,
     }
     for (const [path, text] of Object.entries(files)) {
@@ -98,6 +105,12 @@ test('attribution with notice passes', () => {
     assert.deepEqual(check(repo({ 'plugins/leo/skills/leo-a/SKILL.md': text, 'THIRD_PARTY_NOTICES.md': 'mattpocock/skills\n' })), [])
 })
 
+test('pstack attribution without notice fails', () => {
+    const text = SKILL.replace('**Original.**', '**Adapted from:** pstack `x` (MIT, https://github.com/backnotprop/pstack).')
+    const errors = check(repo({ 'plugins/leo/skills/leo-a/SKILL.md': text }))
+    assert.ok(errors.some((e) => e.includes('backnotprop/pstack not in THIRD_PARTY_NOTICES.md')), errors.join('\n'))
+})
+
 test('subagent mention without rule block fails', () => {
     const errors = check(repo({ 'plugins/leo/skills/leo-a/SKILL.md': `${SKILL}\nSpawn a subagent.\n` }))
     assert.ok(errors.some((e) => e.includes('subagent-model rule missing or differs')), errors.join('\n'))
@@ -118,4 +131,43 @@ test('only mode ignores other missing skills and scopes leaks', () => {
         'AGENTS.md': `# Agents rotor\n\n${RULE}\n`,
     })
     assert.deepEqual(check(root, { only: 'leo-a' }), [])
+})
+
+test('hard-coded project command in a skill fails', () => {
+    for (const cmd of ['npm install', 'cargo build', 'pip install -r x', 'pytest tests/a.py', 'go mod download']) {
+        const errors = check(repo({ 'plugins/leo/skills/leo-a/SKILL.md': `${SKILL}\nRun \`${cmd}\`.\n` }))
+        assert.ok(errors.some((e) => e.includes('hard-coded command')), `${cmd}: ${errors.join('\n')}`)
+    }
+})
+
+test('adapter field placeholder is not a hard-coded command', () => {
+    const errors = check(repo({ 'plugins/leo/skills/leo-a/SKILL.md': `${SKILL}\nRun the \`test\` command from .agents/leo.md.\n` }))
+    assert.deepEqual(errors, [])
+})
+
+test('missing or mismatched agents/openai.yaml fails', () => {
+    const missing = check(repo({ 'plugins/leo/skills/leo-a/agents/openai.yaml': null }))
+    assert.ok(missing.some((e) => e.includes('openai.yaml')), missing.join('\n'))
+    const wrong = check(repo({ 'plugins/leo/skills/leo-a/agents/openai.yaml': OPENAI.replace('$leo-a', '$leo-b') }))
+    assert.ok(wrong.some((e) => e.includes('openai.yaml')), wrong.join('\n'))
+})
+
+test('changelog top entry must match the plugin version', () => {
+    const errors = check(repo({ 'plugins/leo/.claude-plugin/plugin.json': '{ "version": "1.3.0" }\n' }))
+    assert.ok(errors.some((e) => e.includes('CHANGELOG.md: top entry is 1.2.3, plugin.json is 1.3.0')), errors.join('\n'))
+})
+
+test('missing changelog fails', () => {
+    const errors = check(repo({ 'CHANGELOG.md': null }))
+    assert.ok(errors.some((e) => e.includes('CHANGELOG.md: missing')), errors.join('\n'))
+})
+
+test('plugin version must be semver', () => {
+    const errors = check(repo({ 'plugins/leo/.claude-plugin/plugin.json': '{ "version": "v1.2" }\n' }))
+    assert.ok(errors.some((e) => e.includes('not a semver version')), errors.join('\n'))
+})
+
+test('changelog top entry needs a date', () => {
+    const errors = check(repo({ 'CHANGELOG.md': CHANGELOG.replace('## [1.2.3] - 2026-01-02', '## [1.2.3]') }))
+    assert.ok(errors.some((e) => e.includes('top entry has no YYYY-MM-DD date')), errors.join('\n'))
 })

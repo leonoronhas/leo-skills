@@ -3,6 +3,8 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join, relative, sep } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
+import { SEMVER, versionOf } from './semver.mjs'
+
 const SKILLS_DIR = 'plugins/leo/skills'
 const RULE_START = '<!-- leo:subagent-model -->'
 const RULE_END = '<!-- /leo:subagent-model -->'
@@ -20,9 +22,12 @@ const WALK_SKIP = new Set(['.git', 'node_modules'])
 // Files that live in the consuming repo, not beside the skill.
 const EXTERNAL_MD = new Set(['AGENTS.md', 'CLAUDE.md', 'README.md', 'CONTEXT.md', 'SKILL.md', 'CHANGELOG.md', 'THIRD_PARTY_NOTICES.md', 'CONTEXT-MAP.md'])
 const NOT_SKILLS = new Set(['leo-skills'])
+// Project commands come from .agents/leo.md; a skill never names one.
+const HARD_CODED = /\b(npm (test|install|ci|run)|yarn (test|install|run)|pnpm (test|install|run)|cargo (build|test)|pip install|poetry install|go mod download|go test|pytest)\b/
 const UPSTREAMS = [
     ['Superpowers', 'obra/superpowers'],
     ['MattPocock', 'mattpocock/skills'],
+    ['pstack', 'backnotprop/pstack'],
 ]
 
 function walk(dir, root, out = []) {
@@ -85,9 +90,16 @@ function checkSkill(root, name, listed, canonical, notices, errors) {
         }
     }
 
+    const openai = read(root, `${dir}/agents/openai.yaml`)
+    if (!openai) errors.push(`${dir}/agents/openai.yaml: missing`)
+    else if (!openai.includes(`$${name} `)) errors.push(`${dir}/agents/openai.yaml: default_prompt does not invoke $${name}`)
+
     const siblings = new Set(walk(join(root, dir), join(root, dir)))
     for (const file of walk(join(root, dir), root).filter((f) => f.endsWith('.md'))) {
         const text = read(root, file)
+        text.split('\n').forEach((line, i) => {
+            if (HARD_CODED.test(line)) errors.push(`${file}:${i + 1}: hard-coded command; use a field from .agents/leo.md`)
+        })
         for (const [ref] of text.matchAll(/\bleo-[a-z0-9]+(?:-[a-z0-9]+)*/g)) {
             if (!NOT_SKILLS.has(ref) && !listed.has(ref)) errors.push(`${file}: unknown skill reference ${ref}`)
         }
@@ -99,6 +111,19 @@ function checkSkill(root, name, listed, canonical, notices, errors) {
             errors.push(`${file}: subagent-model rule missing or differs from AGENTS.md`)
         }
     }
+}
+
+function checkRelease(root, errors) {
+    const manifest = read(root, 'plugins/leo/.claude-plugin/plugin.json')
+    if (!manifest) return errors.push('plugins/leo/.claude-plugin/plugin.json: missing')
+    const version = versionOf(manifest)
+    if (!SEMVER.test(version ?? '')) errors.push(`plugin.json: ${version} is not a semver version`)
+    const changelog = read(root, 'CHANGELOG.md')
+    if (!changelog) return errors.push('CHANGELOG.md: missing')
+    const top = changelog.match(/^## \[([^\]]+)\](.*)$/m)
+    if (!top) return errors.push('CHANGELOG.md: no "## [version] - YYYY-MM-DD" entry')
+    if (top[1] !== version) errors.push(`CHANGELOG.md: top entry is ${top[1]}, plugin.json is ${version}`)
+    if (!/^ - \d{4}-\d{2}-\d{2}$/.test(top[2])) errors.push('CHANGELOG.md: top entry has no YYYY-MM-DD date')
 }
 
 function checkLeaks(root, files, errors) {
@@ -123,6 +148,8 @@ export function check(root, { only } = {}) {
 
     const names = only ? [only] : [...new Set([...listed, ...skillsOnDisk(root)])].sort()
     for (const name of names) checkSkill(root, name, listed, canonical, notices, errors)
+
+    if (!only) checkRelease(root, errors)
 
     const leakFiles = only ? walk(join(root, SKILLS_DIR, only), root) : walk(root, root)
     checkLeaks(root, leakFiles, errors)

@@ -19,7 +19,7 @@ Read, do not run, unless a step says otherwise. Independent reads may go to suba
 
 | Look at | Yields |
 |---|---|
-| `package.json` scripts, `Makefile`, `pyproject.toml`, `Cargo.toml`, `go.mod` | `test`, `lint`, `lint-fix`, `format`, `typecheck`, `build`, `dev` |
+| `package.json` scripts, `Makefile`, `pyproject.toml`, `Cargo.toml`, `go.mod` | `install`, `test`, `lint`, `lint-fix`, `format`, `typecheck`, `build`, `dev` |
 | `.github/workflows/` | Which commands CI enforces; the canonical check names |
 | `git symbolic-ref refs/remotes/origin/HEAD` | `base-branch` |
 | AGENTS.md, CLAUDE.md | `rules-files`, any standards router, `formatting-owner` (a commit hook or a command), issue-ID pattern, risk areas already named |
@@ -44,6 +44,8 @@ Always ask, whatever the inspection found:
 - **Customer-facing globs.** Which paths change something a customer sees or receives: UI directories, public API routes, email, SMS, or PDF templates.
 
 Also ask `specs-plans-tracked` (`yes` or `no`) and, for `login` under Live check, keep the default: the agent never types passwords and asks the user to log in.
+
+**Under `leo-mode`.** Do not hold the run on this interview. Fill every field the inspection supports and leave the rest blank; still never guess a command. Write `.agents/leo.md`, then raise one batched gate in `gates.md` with your proposed values for Risk areas, customer-facing globs, `specs-plans-tracked`, the routing block, and the standards download. Until the user answers, treat every changed path as risky and customer-facing, which runs `leo-grilling`, the Security lane, and `leo-live-check` rather than skipping them. Neither the routing block nor the standards download happens before a yes.
 
 Do not run the proposed commands: `format` and `lint-fix` rewrite files, and `dev` never exits. Confirm each one resolves instead (the script exists in its manifest, or the binary is on `PATH`) and mark any that do not.
 
@@ -80,7 +82,7 @@ Project facts live in `.agents/leo.md`. Use the matching leo-* skill whenever a 
 | Trigger | Skill |
 |---|---|
 | Any bug, regression, error, crash, failing test, or wrong, broken, or slow behavior: first, before reading or editing code | `leo-diagnosing-bugs` |
-| Root-cause work once `leo-diagnosing-bugs` has a red feedback loop | `leo-systematic-debugging` |
+| How something works or why it was built this way, before changing it | `leo-explain` |
 | Before a feature, behavior change, or UI | `leo-brainstorming` |
 | A plan or decision touching a `Risk areas` entry | `leo-grilling` |
 | Spec exists, multi-step work ahead | `leo-writing-plans` |
@@ -89,6 +91,7 @@ Project facts live in `.agents/leo.md`. Use the matching leo-* skill whenever a 
 | Before opening a PR | `leo-gauntlet` |
 | Before claiming done, fixed, or passing | `leo-trust-but-verify` |
 | Wrapping up a branch | `leo-finishing-branch` |
+| Writing a reply, PR description, commit message, doc, or code comment | `leo-writing` |
 <!-- /leo:routing -->
 ```
 
@@ -117,6 +120,10 @@ If any step fails, stop and report; do not write the fields. On success set:
 
 On a rerun with `standards-source` set, read the latest `main` sha the same way. If it equals the recorded one, do nothing. Otherwise fetch it into a temp directory, show `git diff --no-index --stat docs/standards <temp dir>`, and ask before replacing. On yes, replace the directory and update `standards-source` to the new sha.
 
+## Verification skill
+
+When `customer-facing` has entries and `verify-skill` is blank, offer to create one with `leo-verification-skill`, so agents drive the app the same way every time. Under `leo-mode`, the offer goes in the setup gate.
+
 ## Finish
 
 Report: the files written or changed (including `AGENTS.md`/`CLAUDE.md` for routing), the fields left blank and why, commands that did not resolve, and any ignore entries added. Do not commit.
@@ -131,6 +138,7 @@ Write `.agents/leo.md` with exactly these headings and field names:
 Project facts for leo-* skills. Written by `leo-setup`; edit freely. Leave a field blank when it does not apply.
 
 ## Commands
+- install:
 - test:
 - lint:
 - lint-fix:
@@ -178,6 +186,7 @@ Project facts for leo-* skills. Written by `leo-setup`; edit freely. Leave a fie
 ## Live check
 - dev-url:
 - login: ask the user to log in
+- verify-skill:
 - customer-facing:
   -
 

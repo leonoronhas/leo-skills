@@ -93,7 +93,7 @@ def test_specific_behavior():
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `pytest tests/path/test.py::test_name -v`
+Run: `<test command> <path to the one test>`
 Expected: FAIL with "function not defined"
 
 - [ ] **Step 3: Write minimal implementation**
@@ -105,7 +105,7 @@ def function(input):
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `pytest tests/path/test.py::test_name -v`
+Run: `<test command> <path to the one test>`
 Expected: PASS
 
 - [ ] **Step 5: Commit**
@@ -140,7 +140,7 @@ After writing the complete plan, look at the spec with fresh eyes and check the 
 
 **1. Spec coverage:** Skim each section/requirement in the spec. Can you point to a task that implements it? List any gaps.
 
-**2. Placeholder scan:** Search your plan for red flags — any of the patterns from the "No Placeholders" section above. Fix them.
+**2. Placeholder scan:** Run the `leo-writing` skill's `scripts/prose-lint` on the plan file, then search for the remaining patterns from the "No Placeholders" section above. Fix them.
 
 **3. Type consistency:** Do the types, method signatures, and property names you used in later tasks match what you defined in earlier tasks? A function called `clearLayers()` in Task 3 but `clearFullLayers()` in Task 7 is a bug.
 
@@ -148,7 +148,7 @@ If you find issues, fix them inline. No need to re-review — just fix and move 
 
 ## Execution Handoff
 
-After saving the plan, continue only after the user approves the plan or has already asked for execution. Then hand the saved plan to `leo-executing-plans`.
+After saving the plan, continue only after the user approves the plan or has already asked for execution. Under `leo-mode`, the run is the request for execution: continue. Then hand the saved plan to `leo-executing-plans`.
 
 <!-- leo:subagent-model -->
 **Subagent model.** Use `subagent-model` from `.agents/leo.md` when it is set. Otherwise use one tier below your own model in the same vendor family; if you are already on the smallest tier, or cannot name your own model, use your own model. Delegate only read-heavy, independent work; design, security judgment, and final verification stay with you.

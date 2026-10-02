@@ -44,6 +44,10 @@ BEFORE saying "done", "fixed", "working", "passing", "implemented", "ready to sh
 4. **Match output to claim** — does it actually confirm?
 5. **Only then** make the claim, citing the evidence
 
+For the adapter's checks, run `scripts/verify` from this skill's directory. It runs `typecheck`, `lint`, `test`, and `build` from `.agents/leo.md`, fails on leftover `__*` scratch files, and writes a transcript. Cite its summary lines and transcript path.
+
+A success report from an agent, or a run from earlier in the session, is not evidence; run the command yourself. Any positive claim without fresh command output is NOT YET, whatever the wording.
+
 ## Common Claims → Required Verification
 
 The commands come from the `Commands` section of `.agents/leo.md`.
@@ -59,25 +63,6 @@ The commands come from the `Commands` section of `.agents/leo.md`.
 
 A delegated task proves itself with the narrowest form of these commands that covers its files;
 the full commands run once by whoever integrates the work, after integration.
-
-## Red Flags — Auto-NOT YET
-
-- "Should work now"
-- "I'm confident"
-- "Looks correct"
-- "Tests passed earlier"
-- "Agent said success"
-- "Just this once"
-- Any positive claim without fresh command output
-
-## Rationalization Prevention
-
-| Excuse | Response |
-|--------|----------|
-| "I already ran it" | Run it again. Fresh. |
-| "It's obvious" | Obvious things break most. |
-| "No time" | Bug in prod takes more time. |
-| "Different words" | Spirit over letter. |
 
 ## When You Can't Prove
 
