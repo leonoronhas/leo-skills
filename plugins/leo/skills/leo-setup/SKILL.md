@@ -45,6 +45,8 @@ Always ask, whatever the inspection found:
 
 Also ask `specs-plans-tracked` (`yes` or `no`) and, for `login` under Live check, keep the default: the agent never types passwords and asks the user to log in.
 
+**Under `leo-mode`.** Do not hold the run on this interview. Fill every field the inspection supports and leave the rest blank; still never guess a command. Write `.agents/leo.md`, then raise one batched gate in `gates.md` with your proposed values for Risk areas, customer-facing globs, `specs-plans-tracked`, the routing block, and the standards download. Until the user answers, treat every changed path as risky and customer-facing, which runs `leo-grilling`, the Security lane, and `leo-live-check` rather than skipping them. Neither the routing block nor the standards download happens before a yes.
+
 Do not run the proposed commands: `format` and `lint-fix` rewrite files, and `dev` never exits. Confirm each one resolves instead (the script exists in its manifest, or the binary is on `PATH`) and mark any that do not.
 
 ## Write

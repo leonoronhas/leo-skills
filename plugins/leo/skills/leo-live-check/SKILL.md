@@ -11,7 +11,7 @@ description: Use to prove a customer-facing change works in the running app befo
 
 Read `.agents/leo.md` first. If it does not exist, run `leo-setup`, then continue.
 
-Fields used: `dev`, `dev-url`, `login`, `customer-facing`, `base-branch`. If `dev-url` is blank, ask the user for it; if none is given, end with `result: fail` and say why.
+Fields used: `dev`, `dev-url`, `login`, `customer-facing`, `base-branch`. If `dev-url` is blank, ask the user for it; if none is given, end with `result: fail` and say why. Under `leo-mode`, write the missing `dev-url` to `gates.md` instead of asking, end with `result: fail`, and let the run continue on other work.
 
 ## Rules
 
@@ -34,7 +34,7 @@ Fields used: `dev`, `dev-url`, `login`, `customer-facing`, `base-branch`. If `de
 3. **Server.** Request `dev-url`. Any HTTP response below 500 means a server is already running: reuse it, and do not stop it later. Otherwise run the `dev` command in the background, output to a log file, and poll `dev-url` every 2 seconds. If it has not answered after 120 seconds, stop the server you started and end with `result: fail`, quoting the last 40 lines of the log.
 4. **Exercise.** Drive each listed behavior through the browser tool you have; if you have none, use HTTP requests. Follow the changed path end to end, plus the nearest failure path (invalid input, empty state). Capture per behavior: a screenshot or the response, and the result.
 5. **Errors.** Read browser console messages and the server log (the one you started, or the terminal output you can see). An error caused by the change fails the check. Note unrelated errors that already existed; do not fail on them.
-6. **Login.** If a behavior needs a session, follow `login`, except never type a password: ask the user to sign in, and keep running the unauthenticated behaviors while you wait. If no session appears, list the authenticated behaviors as unchecked and end with `result: fail`.
+6. **Login.** If a behavior needs a session, follow `login`, except never type a password: ask the user to sign in, and keep running the unauthenticated behaviors while you wait. Under `leo-mode`, the sign-in request is a gate in `gates.md`. If no session appears, list the authenticated behaviors as unchecked and end with `result: fail`.
 7. **Cleanup.** Stop the server only if you started it, including on failure.
 8. **Fingerprint again.** If it differs from step 1, the diff changed during the run: rerun from step 1.
 

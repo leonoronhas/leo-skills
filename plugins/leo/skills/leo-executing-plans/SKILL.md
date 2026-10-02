@@ -103,7 +103,7 @@ digraph process {
 
 ## Setup
 
-Work in an isolated workspace: use `leo-worktrees` to create one or verify the existing one. Never start implementation on `base-branch` without the user's explicit consent.
+Work in an isolated workspace: use `leo-worktrees` to create one or verify the existing one. Never start implementation on `base-branch` without the user's explicit consent. Under `leo-mode`, always work in a worktree, so this consent is never needed.
 
 Conversation memory does not survive compaction. Controllers that lose their place re-dispatch entire completed task sequences, the most expensive failure there is. Track progress in a ledger file, not only in todos.
 

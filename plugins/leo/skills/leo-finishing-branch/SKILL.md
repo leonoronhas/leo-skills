@@ -19,6 +19,14 @@ Read `.agents/leo.md` first. If it does not exist, run `leo-setup`, then continu
 
 **Every push, merge, or PR asks the user first.** Choosing an option from the menu selects it; it is not the yes. Before running the action, state exactly what will run (commands, remote, branch, target) and wait for an explicit yes. A later push to the same branch asks again.
 
+**Under `leo-mode`.** Skip the menu. Run everything up to the push yourself, then raise exactly one gate.
+
+- Step 1: a blank `test` field goes to `gates.md`. Failing checks still stop the run.
+- Step 3: a blank or doubtful base is a ruling on your best guess, written into the gate below.
+- Option 2, steps 1 and 3: commit the gauntlet's edits locally yourself, with a message per `leo-writing`, and log the ruling. A local commit is reversible.
+- The one gate is "push `<branch>` to `origin` and open a PR against `<base-branch>`". It shows the exact commands, the gauntlet verdict, and the PR title and description. Nothing is pushed until the user says yes.
+- Never choose merge or discard yourself. Those stay menu choices for the user, with their confirmations unchanged.
+
 ## Step 1: Verify Tests
 
 Run the `test` command from `.agents/leo.md` in full, plus `typecheck` and `lint` when set. If `test` is blank, ask the user for the command.

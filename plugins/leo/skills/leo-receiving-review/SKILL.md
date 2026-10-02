@@ -57,6 +57,8 @@ IF any item is unclear:
 WHY: Items may be related. Partial understanding = wrong implementation.
 ```
 
+**Under `leo-mode`.** Implement the clear items that do not depend on an unclear one. Write each unclear item to `gates.md` with your best reading as the default, and hold only the items related to it.
+
 **Example:**
 ```
 User: "Fix 1-6"
@@ -92,6 +94,8 @@ IF can't easily verify:
 IF conflicts with the user's prior decisions:
   Stop and discuss with the user first
 ```
+
+Under `leo-mode`, both cases become gates: the limitation or the conflict, your recommendation, and what it blocks. Keep working on everything else.
 
 Be skeptical of external feedback, and check carefully.
 

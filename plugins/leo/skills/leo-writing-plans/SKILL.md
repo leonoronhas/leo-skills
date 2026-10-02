@@ -148,7 +148,7 @@ If you find issues, fix them inline. No need to re-review — just fix and move 
 
 ## Execution Handoff
 
-After saving the plan, continue only after the user approves the plan or has already asked for execution. Then hand the saved plan to `leo-executing-plans`.
+After saving the plan, continue only after the user approves the plan or has already asked for execution. Under `leo-mode`, the run is the request for execution: continue. Then hand the saved plan to `leo-executing-plans`.
 
 <!-- leo:subagent-model -->
 **Subagent model.** Use `subagent-model` from `.agents/leo.md` when it is set. Otherwise use one tier below your own model in the same vendor family; if you are already on the smallest tier, or cannot name your own model, use your own model. Delegate only read-heavy, independent work; design, security judgment, and final verification stay with you.

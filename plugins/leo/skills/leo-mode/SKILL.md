@@ -225,6 +225,7 @@ A field you cannot fill means the unit is not scoped: do not spawn. Size the bri
 - Gates are the only reasons to stop for the user: an irreversible or destructive operation; a security-sensitive action; a side effect outside the worktree (push, merge, publish, deploy, a message, a ticket change); a product or preference call no experiment settles; every path forward is a guess.
 - Write each gate to `gates.md`: the question, the options, your default, what it blocks. Route other work around it. Ask all open gates together, not one at a time.
 - "Going to bed" or "don't stop" keeps the run going; gates still wait for the user.
+- A leo-* skill step that asks the user follows that skill's "Under `leo-mode`" note. A step with no note becomes a gate when it falls in a gate category above, and a logged ruling otherwise.
 - When asked for your view, give your real judgment, including "no" or "this does not earn its place".
 
 ## Decision log

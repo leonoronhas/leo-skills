@@ -48,7 +48,7 @@ Has the user already indicated their worktree preference in your instructions? I
 
 > "Would you like me to set up an isolated worktree? It protects your current branch from changes."
 
-Honor any existing declared preference without asking. If the user declines consent, work in place and skip to Step 2.
+Honor any existing declared preference without asking. Under `leo-mode`, the mode itself is the consent: create the worktree without asking. If the user declines consent, work in place and skip to Step 2.
 
 ## Step 1: Create Isolated Workspace
 
@@ -124,7 +124,7 @@ If the `build` command in `.agents/leo.md` is set and the project needs a build 
 
 Run the `test` command from `.agents/leo.md` to ensure the workspace starts clean. Run `typecheck` too when it is set.
 
-**If tests fail:** Report failures, ask whether to proceed or investigate.
+**If tests fail:** Report failures, ask whether to proceed or investigate. Under `leo-mode`, record the failing tests as a known-red baseline in `decisions.tsv` and continue. Later checks compare against that list, and the final report names every pre-existing failure.
 
 **If tests pass:** Report ready.
 
