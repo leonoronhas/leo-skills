@@ -82,6 +82,7 @@ Project facts live in `.agents/leo.md`. Use the matching leo-* skill whenever a 
 | Trigger | Skill |
 |---|---|
 | Any bug, regression, error, crash, failing test, or wrong, broken, or slow behavior: first, before reading or editing code | `leo-diagnosing-bugs` |
+| How something works or why it was built this way, before changing it | `leo-explain` |
 | Before a feature, behavior change, or UI | `leo-brainstorming` |
 | A plan or decision touching a `Risk areas` entry | `leo-grilling` |
 | Spec exists, multi-step work ahead | `leo-writing-plans` |
@@ -118,6 +119,10 @@ If any step fails, stop and report; do not write the fields. On success set:
 - `rule-id-convention: typescript-standards IDs, e.g. TS-003, SEC-007`
 
 On a rerun with `standards-source` set, read the latest `main` sha the same way. If it equals the recorded one, do nothing. Otherwise fetch it into a temp directory, show `git diff --no-index --stat docs/standards <temp dir>`, and ask before replacing. On yes, replace the directory and update `standards-source` to the new sha.
+
+## Verification skill
+
+When `customer-facing` has entries and `verify-skill` is blank, offer to create one with `leo-verification-skill`, so agents drive the app the same way every time. Under `leo-mode`, the offer goes in the setup gate.
 
 ## Finish
 
@@ -181,6 +186,7 @@ Project facts for leo-* skills. Written by `leo-setup`; edit freely. Leave a fie
 ## Live check
 - dev-url:
 - login: ask the user to log in
+- verify-skill:
 - customer-facing:
   -
 

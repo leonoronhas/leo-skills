@@ -7,7 +7,7 @@ disable-model-invocation: true
 
 # Handoff
 
-**Adapted from:** MattPocock `handoff` (MIT, https://github.com/mattpocock/skills).
+**Adapted from:** MattPocock `handoff` (MIT, https://github.com/mattpocock/skills) and pstack `pause-safely` and `session-pickup` (MIT, https://github.com/backnotprop/pstack).
 
 ## Before you start
 
@@ -22,3 +22,25 @@ Do not duplicate content already captured in other artifacts (specs, plans, ADRs
 Redact any sensitive information, such as API keys, passwords, or personally identifiable information.
 
 If the user passed arguments, treat them as a description of what the next session will focus on and tailor the doc accordingly.
+
+Under `leo-mode`, write the document to the task workspace as `.agents/leo-mode/<task-slug>/resume.md` and point at its `decisions.tsv`, `gates.md`, and `standing.md` instead of restating them.
+
+## Pause
+
+Pause only when the user asks. "Keep going", "going to bed, keep going", and "don't stop" are not pauses.
+
+1. Stop at a safe boundary. Finish the current step or back out of it; never stop mid-edit in a broken state. Start nothing new and stop any delegated work you started.
+2. Take no irreversible action to pause: no push and no PR that was not already out.
+3. Commit uncommitted edits as one `wip:` commit on the current branch. If the tree is broken, say so in one line of the commit body.
+4. Write the handoff document: intent, progress and what is verified, current state, next steps, key files, and gotchas.
+
+Reply with where you stopped, the commit you made, whether the tree is clean, and the first action on resume.
+
+## Pick up
+
+1. Find the trail: the handoff document, the task workspace, the branch, and `git log` against the base.
+2. Rebuild the state from it: branch, worktree, what landed, open gates, decisions made. The trail is authoritative; do not re-derive it.
+3. Compare done with pending and name the resume point. Do not redo finished work or rerun a finished repro.
+4. Route the remaining work to its `leo-mode` flow or skill.
+5. Verify every inherited claim against the real artifact before relying on it. A prior self-report is not proof.
+

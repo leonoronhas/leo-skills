@@ -24,6 +24,8 @@ Fields used: `dev`, `dev-url`, `login`, `customer-facing`, `base-branch`. If `de
 1. **Fingerprint.** Compute it now with the `leo-gauntlet` skill's `scripts/live-fingerprint <base-branch> <customer-facing entries, quoted>`. With no entries, pass only the base branch so the whole diff is hashed.
 
 2. **List what to exercise.** Read the diff. Write down each changed customer-facing behavior and the observable result that proves it.
+When `verify-skill` is set, use that skill's Launch, Doctor, Drive, Evidence, and Cleanup sections for steps 3, 4, and 7, and its feature map for step 2.
+
 3. **Server.** Request `dev-url`. Any HTTP response below 500 means a server is already running: reuse it, and do not stop it later. Otherwise run the `dev` command in the background, output to a log file, and poll `dev-url` every 2 seconds. If it has not answered after 120 seconds, stop the server you started and end with `result: fail`, quoting the last 40 lines of the log.
 4. **Exercise.** Drive each listed behavior through the browser tool you have; if you have none, use HTTP requests. Follow the changed path end to end, plus the nearest failure path (invalid input, empty state). Capture per behavior: a screenshot or the response, and the result.
 5. **Errors.** Read browser console messages and the server log (the one you started, or the terminal output you can see). An error caused by the change fails the check. Note unrelated errors that already existed; do not fail on them.

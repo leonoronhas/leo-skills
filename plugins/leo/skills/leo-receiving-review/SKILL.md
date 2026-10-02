@@ -119,6 +119,21 @@ Push back when:
 
 **If you're uncomfortable pushing back out loud:** Name that tension, then tell the user about the issue you've seen.
 
+## CI and review bots after the PR
+
+**Adapted from:** pstack `babysit` (MIT, https://github.com/backnotprop/pstack).
+
+Work in this order: merge conflicts, then review threads, then CI.
+
+- **Conflicts.** Report which branch needs a rebase and stop that item. Never rebase, retarget, or force-push from here.
+- **Bots.** Treat each bot comment as a claim to verify against the code, like any external review. Fix real findings with a failing test first. Dismiss noise on the thread with the concrete disproof. Never change code only to quiet a bot. Escalate anything touching security, auth, billing, data, or migrations instead of dismissing it.
+- **CI.** Classify a failure before retrying it:
+  - A failure in code the diff never touches: check for a stale base with `git merge-base --is-ancestor origin/<base-branch> HEAD`. A stale base needs a rebase; report it rather than retrying.
+  - Infrastructure or flake: one fresh run, once. An identical second failure was never flake; read the logs.
+  - A failure in the diff's own code: fix it with a failing test first.
+- Batch every fix into one push wave. Under `leo-mode`, each push wave is a gate.
+- Stop when the forge reports the PR mergeable with checks green and no unresolved blocking threads. Never merge from here; merging is the user's call.
+
 ## Review Thread Replies
 
 When replying to inline review comments on a code host, reply in the comment thread, not as a top-level PR comment. On GitHub: `gh api repos/{owner}/{repo}/pulls/{pr}/comments/{id}/replies`.

@@ -152,7 +152,7 @@ git branch -d <feature-branch>
     # git push origin HEAD:refs/heads/<new-branch>
     ```
 
-    Then create the pull/merge request against `<base-branch>` with the forge's tooling (its CLI if one is available, or the creation URL most forges print when you push), following the repo's PR template and conventions if present. Put the gauntlet report's verdict and per-stage status in the description, and write the description per `leo-writing`, running its `scripts/prose-lint` on the description file before creating the PR. When `tracker` in `.agents/leo.md` is set and the branch or plan names an id matching `id-pattern`, link that issue. Report the URL to the user.
+    Then create the pull/merge request against `<base-branch>` with the forge's tooling (its CLI if one is available, or the creation URL most forges print when you push), following the repo's PR template and conventions if present. Put the gauntlet report's verdict and per-stage status in the description, and write the description per `leo-writing`, running its `scripts/prose-lint` on the description file before creating the PR. Open the PR ready for review, not as a draft. When `tracker` in `.agents/leo.md` is set and the branch or plan names an id matching `id-pattern`, link that issue. Report the URL to the user.
 
     If the push is rejected, the remote moved: investigate. Force-push only on the user's explicit request.
 

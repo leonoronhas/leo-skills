@@ -7,9 +7,9 @@ Evidence-first engineering skills for coding agents. Install, run `leo-setup` on
 <!-- leo:roster -->
 | Phase | Skills |
 |---|---|
-| Setup | `leo-setup` |
+| Setup | `leo-setup`, `leo-verification-skill` |
 | Mode | `leo-mode` |
-| Think | `leo-brainstorming`, `leo-grilling`, `leo-domain-modeling`, `leo-codebase-design`, `leo-prototype`, `leo-research` |
+| Think | `leo-explain`, `leo-brainstorming`, `leo-grilling`, `leo-domain-modeling`, `leo-codebase-design`, `leo-prototype`, `leo-research` |
 | Plan | `leo-writing-plans` |
 | Build | `leo-executing-plans`, `leo-tdd`, `leo-diagnosing-bugs`, `leo-simplify`, `leo-worktrees`, `leo-resolving-merge-conflicts` |
 | Review | `leo-gauntlet`, `leo-code-review`, `leo-security-review`, `leo-performance-review`, `leo-live-check`, `leo-receiving-review`, `leo-pr-review` |

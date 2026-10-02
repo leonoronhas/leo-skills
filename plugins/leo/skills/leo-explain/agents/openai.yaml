@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Explain'
+    short_description: 'How and why, with cited evidence'
+    default_prompt: 'Apply $leo-explain to this task.'

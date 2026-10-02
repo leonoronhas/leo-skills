@@ -92,14 +92,15 @@ No flow fits: write a short bespoke flow (steps, each ending in a check), log it
 
 ### Refactor
 
-1. `leo-codebase-design` to name the target shape.
-2. Characterization tests through `leo-tdd` where behavior is not already pinned.
-3. Implementer moves the code; tests stay green at every step.
-4. `leo-simplify`, then `leo-gauntlet`, then `leo-finishing-branch`.
+1. `leo-codebase-design` to name the target shape, and `leo-explain` for what callers depend on.
+2. Name the one fact the refactor is safe because of, and prove it with a script that runs the real code.
+3. Characterization tests through `leo-tdd` where behavior is not already pinned.
+4. Implementer moves the code; tests stay green at every step.
+5. `leo-simplify`, then `leo-gauntlet`, then `leo-finishing-branch`.
 
 ### Investigation
 
-1. `leo-research` for external facts; read the code for internal ones.
+1. `leo-explain` for how and why inside the repo; `leo-research` for external facts.
 2. Answer with `file:line` and command evidence. No code changes.
 
 ### Decision
@@ -126,7 +127,7 @@ Run Review lanes on the PR's diff. Report only; no edits unless asked.
 
 ### Resume
 
-`leo-handoff` to pause or pick up. Read the task's `standing.md`, `decisions.tsv`, and `gates.md` before acting.
+`leo-handoff` Pause or Pick up. Read the task's `standing.md`, `decisions.tsv`, and `gates.md` before acting.
 
 ## Roles
 
@@ -227,7 +228,8 @@ Append rows with `scripts/log <task dir> <phase> <decision> <why> <evidence> <re
 
 1. `leo-trust-but-verify`, run by you, never delegated.
 2. `scripts/commit-proof <base-branch> -- <test command>`: every red commit must be followed directly by its green fix (non-negotiable 2).
-3. Reply, written per `leo-writing`:
+3. Reflect. Scan `decisions.tsv` and the gauntlet findings for a lesson that came up twice: the same finding, correction, or ruling. Encode each per non-negotiable 3, or list it as a gate when it needs its own PR.
+4. Reply, written per `leo-writing`:
    - What changed for the person affected, then what the next maintainer inherits.
    - Every claim carries its evidence or a label: measured, inferred, or guess.
    - For bugs: root cause, fix, and the failing-then-green loop output.

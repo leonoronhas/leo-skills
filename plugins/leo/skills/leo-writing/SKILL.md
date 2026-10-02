@@ -39,8 +39,15 @@ The codebase is the word list. Write the real symbol, file, flag, or command nam
 
 ## Commits and PR descriptions
 
-- A PR body is a briefing a reviewer reads in under a minute: what changed, why, how it was verified, what is open. Link logs, SHA lists, and metric tables instead of pasting them.
-- A commit subject says what the commit does, in the imperative. The body says why, and names the root cause for a fix.
+- A PR body is a briefing a reviewer reads in under a minute. Use these sections in order, dropping any with nothing to say:
+  - `## Why`: the intent and approach in one or two short paragraphs.
+  - `## Scope`: bullets naming real symbols and paths; both sides of a rename. State what is out of scope only when the boundary matters.
+  - `## Tradeoffs`: only the rejected alternatives a reviewer would ask about.
+  - `## Blast radius`: one to three sentences on who or what the change touches and why it is safe.
+  - `## Verification`: each real check run and its result. For a performance change, one number in `before → after` form with its unit.
+- Keep the body under about 40 lines. Link logs, SHA lists, and metric tables instead of pasting them. No `## Summary` or `## Test plan` boilerplate.
+- When the repo has a PR template, it wins over these sections.
+- Titles and commit subjects use Conventional Commits: `type(scope): subject`, with `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, or `perf`. Imperative, short, no trailing period. The commit body says why and names the root cause for a fix; it does not restate the subject.
 - Make every count or claim true at the commit that lands it, and give the command that regenerates it.
 
 ## Code comments

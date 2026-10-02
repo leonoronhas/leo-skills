@@ -68,6 +68,14 @@ Tiers, used here and by `leo-mode`:
 - Each lane returns findings with severity `blocker`, `high`, `medium` or `low`; map any other scale onto these.
 - A lane's verifier comes from a different vendor than its reviewer: `other-vendor`, or `strong` when the reviewer is `other-vendor`.
 - A lane skill run as a lane reviews only its own lens, in one pass, and spawns no subagents of its own.
+- Each verdict says how far its evidence got:
+  1. Said so.
+  2. Pointed at the `file:line`.
+  3. Walked the failure step by step and showed whether it reaches.
+  4. Ran a script or test against the real code.
+  5. Reproduced it in the running app.
+
+  `confirmed` and `refuted` need step 3 or higher. Refuting a security or correctness finding needs step 4.
 - Findings below `medium` get no verifier. They are reported and not auto-fixed.
 - A lane that does not run is listed with its reason (for example "no data-layer paths changed"). Bugs and Standards always run.
 

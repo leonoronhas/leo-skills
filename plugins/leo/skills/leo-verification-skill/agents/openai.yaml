@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Verification Skill'
+    short_description: 'Create or maintain a verify-app skill'
+    default_prompt: 'Apply $leo-verification-skill to this task.'
