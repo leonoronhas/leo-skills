@@ -19,7 +19,7 @@ Read, do not run, unless a step says otherwise. Independent reads may go to suba
 
 | Look at | Yields |
 |---|---|
-| `package.json` scripts, `Makefile`, `pyproject.toml`, `Cargo.toml`, `go.mod` | `test`, `lint`, `lint-fix`, `format`, `typecheck`, `build`, `dev` |
+| `package.json` scripts, `Makefile`, `pyproject.toml`, `Cargo.toml`, `go.mod` | `install`, `test`, `lint`, `lint-fix`, `format`, `typecheck`, `build`, `dev` |
 | `.github/workflows/` | Which commands CI enforces; the canonical check names |
 | `git symbolic-ref refs/remotes/origin/HEAD` | `base-branch` |
 | AGENTS.md, CLAUDE.md | `rules-files`, any standards router, `formatting-owner` (a commit hook or a command), issue-ID pattern, risk areas already named |
@@ -133,6 +133,7 @@ Write `.agents/leo.md` with exactly these headings and field names:
 Project facts for leo-* skills. Written by `leo-setup`; edit freely. Leave a field blank when it does not apply.
 
 ## Commands
+- install:
 - test:
 - lint:
 - lint-fix:

@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+# Run COMMAND at the merge-base of BASE_BRANCH and HEAD, in a temporary
+# worktree, and in the current working tree. Print both exit codes and the
+# tail of each output.
+#
+#   --with PATH     copy PATH from the working tree into the base checkout
+#                   first, so a new test runs against the old code
+#   --link PATH     symlink PATH (for example installed dependencies) into
+#                   the base checkout
+#   --expect-fix    exit 0 only when the base run fails and the current run
+#                   passes
+#
+# Usage: base-head [--expect-fix] [--with PATH]... [--link PATH]... BASE_BRANCH -- COMMAND
+set -uo pipefail
+expect_fix=0
+with=()
+link=()
+while [ $# -gt 0 ]; do
+  case $1 in
+    --expect-fix) expect_fix=1; shift ;;
+    --with) with+=("$2"); shift 2 ;;
+    --link) link+=("$2"); shift 2 ;;
+    *) break ;;
+  esac
+done
+if [ $# -lt 3 ] || [ "$2" != "--" ]; then
+  echo "usage: base-head [--expect-fix] [--with PATH]... [--link PATH]... BASE_BRANCH -- COMMAND" >&2
+  exit 2
+fi
+base=$1
+shift 2
+cmd="$*"
+root=$(git rev-parse --show-toplevel)
+cd "$root" || exit 2
+merge_base=$(git merge-base "$base" HEAD) || exit 2
+
+tmp=$(mktemp -d)
+checkout="$tmp/base"
+# This worktree is created here and removed here; nothing else lives in it.
+trap 'git -C "$root" worktree remove --force "$checkout" > /dev/null 2>&1; rm -rf "$tmp"' EXIT
+git worktree add --detach -q "$checkout" "$merge_base" || exit 2
+for path in ${with[@]+"${with[@]}"}; do
+  mkdir -p "$checkout/$(dirname "$path")"
+  cp -R "$root/$path" "$checkout/$path"
+done
+for path in ${link[@]+"${link[@]}"}; do
+  ln -s "$root/$path" "$checkout/$path"
+done
+
+(cd "$checkout" && bash -c "$cmd") > "$tmp/base.log" 2>&1
+base_code=$?
+bash -c "$cmd" > "$tmp/head.log" 2>&1
+head_code=$?
+
+echo "base: exit $base_code (${merge_base:0:7})"
+tail -n 15 "$tmp/base.log" | sed 's/^/  /'
+echo "head: exit $head_code (working tree)"
+tail -n 15 "$tmp/head.log" | sed 's/^/  /'
+
+if [ "$expect_fix" -eq 1 ]; then
+  if [ "$base_code" -ne 0 ] && [ "$head_code" -eq 0 ]; then
+    echo "expect-fix: ok (fails on base, passes now)"
+    exit 0
+  fi
+  echo "expect-fix: FAIL (base exit $base_code, head exit $head_code)"
+  exit 1
+fi
+exit "$head_code"

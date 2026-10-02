@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Check that every evidence pointer in TASK_DIR/decisions.tsv resolves. A
+# commit id (7 to 40 hex characters) must exist in this repo. A path, or
+# path:line, must exist from the repo root or from TASK_DIR. Commands, PR
+# numbers, URLs, and prose are not checked. Exit 1 lists every row whose
+# evidence does not resolve.
+#
+# Usage: audit TASK_DIR
+set -uo pipefail
+if [ $# -ne 1 ]; then
+  echo "usage: audit TASK_DIR" >&2
+  exit 2
+fi
+dir=$1
+file="$dir/decisions.tsv"
+[ -f "$file" ] || { echo "audit: $file not found" >&2; exit 2; }
+root=$(git rev-parse --show-toplevel)
+ext='(md|ts|tsx|js|jsx|mjs|cjs|json|sh|py|go|rs|rb|java|kt|swift|sql|tsv|csv|txt|yml|yaml|toml|html|css|png|jpg|svg|diff|log)'
+
+bad=0
+n=0
+while IFS=$'\t' read -r _ts _phase _decision _why evidence _result; do
+  n=$((n + 1))
+  [ "$n" -eq 1 ] && continue
+  read -ra tokens <<< "${evidence//[,;()]/ }"
+  for token in "${tokens[@]}"; do
+    token=${token%.}
+    case $token in
+      http* | \#*) continue ;;
+    esac
+    if [[ $token =~ ^[0-9a-f]{7,40}$ ]]; then
+      git cat-file -e "$token^{commit}" 2> /dev/null || { echo "row $n: commit $token not found"; bad=1; }
+    elif [[ $token == */* || $token =~ \.$ext(:[0-9]+)?$ ]]; then
+      path=${token%%:*}
+      [ -e "$root/$path" ] || [ -e "$dir/$path" ] || { echo "row $n: path $path not found"; bad=1; }
+    fi
+  done
+done < "$file"
+
+[ "$bad" -eq 0 ] && echo "audit: every evidence pointer resolves ($((n - 1)) rows)"
+exit "$bad"

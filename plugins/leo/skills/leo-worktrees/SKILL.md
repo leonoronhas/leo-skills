@@ -101,22 +101,7 @@ cd "$path"
 
 ## Step 2: Project Setup
 
-Install dependencies with the setup the repo documents (its `rules-files` from `.agents/leo.md`, README, or CI config). If nothing is documented, auto-detect:
-
-```bash
-# Node.js
-if [ -f package.json ]; then npm install; fi
-
-# Rust
-if [ -f Cargo.toml ]; then cargo build; fi
-
-# Python
-if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-if [ -f pyproject.toml ]; then poetry install; fi
-
-# Go
-if [ -f go.mod ]; then go mod download; fi
-```
+Run the `install` command from `.agents/leo.md`. If it is blank, use the setup the repo documents (its `rules-files`, README, or CI config). If nothing is documented, leave dependencies uninstalled and report it; under `leo-mode`, that is a gate.
 
 If the `build` command in `.agents/leo.md` is set and the project needs a build before tests run, run it.
 

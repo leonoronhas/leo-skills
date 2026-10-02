@@ -18,6 +18,7 @@ The goal is text a tired engineer understands on the first read.
 1. Write clean as you draft. A cleanup pass after drafting does not remove these patterns.
 2. Scan the draft against the patterns below and rewrite. Keep the meaning and the intended tone.
 3. Ask: "What makes this obviously AI-written?" Fix what remains.
+4. For a PR description, plan, doc, or spec saved to a file, run `scripts/prose-lint <file>` from this skill's directory. It catches rules 3, 9, 15, 16, and placeholders; the rest need your read.
 
 Three rules sit above the rest:
 

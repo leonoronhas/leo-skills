@@ -54,7 +54,7 @@ Tiers, used here and by `leo-mode`:
 | Spec | An issue, spec, or plan exists | `mid` | Each acceptance item mapped to diff lines, or flagged missing. The orchestrator verifies this lane. | `leo-code-review`, Spec axis |
 | Security | The diff touches a `Risk areas` entry, auth, webhooks, secrets, dependencies, or agent-instruction files | `strong` | A reachable entry point and who can call it | `leo-security-review` |
 | Performance | The diff touches the data layer, queries, the frontend bundle, or the mobile runtime | `mid` | A measurement: query count, `index-check-command`, `bundle-budget-command`, or timing | `leo-performance-review` |
-| Tests | The diff adds or changes tests, or changes tested code | `mid` | The test fails on the base and passes on the head | `leo-tdd` |
+| Tests | The diff adds or changes tests, or changes tested code | `mid` | The test fails on the base and passes on the head: `leo-mode` skill's `scripts/base-head --expect-fix --with <test file> <base-branch> -- <test command>` | `leo-tdd` |
 
 - A lane's verifier spawns only when its reviewer reports a finding at `medium` or above.
 - The verifier rules on each finding: `confirmed`, `refuted`, or `can't tell`, with evidence. Refuted findings are dismissed with the verifier's reason. The orchestrator decides `can't tell`.
@@ -76,15 +76,12 @@ Tiers, used here and by `leo-mode`:
 Skip `leo-live-check` only when one holds, and record which:
 
 - No changed path matches a `customer-facing` glob and you judge that nothing customer-facing changed (no behavior a customer sees or receives).
-- A line `live-check fingerprint: <hash> result: pass` appears earlier in this session and `<hash>` equals the current fingerprint. Cite that run in the report.
+- `.agents/gauntlet/live-<fingerprint>.txt` exists for the current fingerprint and its last line is `live-check fingerprint: <hash> result: pass`. Cite that file in the report.
 
-Current fingerprint, exactly as `leo-live-check` computes it (`<customer-facing globs>` are the `customer-facing` entries, quoted):
+Current fingerprint, exactly as `leo-live-check` computes it, from this skill's directory:
 
 ```bash
-tmp="$(mktemp -d)/index"
-GIT_INDEX_FILE="$tmp" git read-tree HEAD
-GIT_INDEX_FILE="$tmp" git add -A
-GIT_INDEX_FILE="$tmp" git diff --cached "$(git merge-base <base-branch> HEAD)" -- <customer-facing globs> | git hash-object --stdin
+scripts/live-fingerprint <base-branch> <customer-facing entries, quoted>
 ```
 
 Any customer-facing edit since that run, including an auto-fix, changes the fingerprint and the stage runs again. A `result: fail` line never allows a skip.
@@ -103,14 +100,7 @@ Never commit, push, or stage. Every edit is listed in the report.
 
 ## Report
 
-Compute the tree hash last, after the final edit, from the repo root:
-
-```bash
-tmp="$(mktemp -d)/index"
-GIT_INDEX_FILE="$tmp" git read-tree HEAD
-GIT_INDEX_FILE="$tmp" git add -A
-GIT_INDEX_FILE="$tmp" git write-tree
-```
+Compute the tree hash last, after the final edit, with `scripts/tree-hash` from this skill's directory. It prints the hash of HEAD plus every working-tree change.
 
 Write `.agents/gauntlet/<tree hash>.md`. The first three lines are exactly:
 
@@ -127,6 +117,8 @@ result: pass|fail
 3. Edit list: every file changed by the gauntlet and why.
 
 `result: pass` requires verdict `PROVEN` and no open finding at `high` or `blocker`. Otherwise `fail`.
+
+After writing the report, run `scripts/gate-check <tree hash>`. It fails when the `result:` line disagrees with the verdict and the findings table; fix the report, not the check.
 
 Any edit after the report changes the tree hash and invalidates it. Rerun the gauntlet.
 

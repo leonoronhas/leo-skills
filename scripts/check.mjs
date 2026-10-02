@@ -20,6 +20,8 @@ const WALK_SKIP = new Set(['.git', 'node_modules'])
 // Files that live in the consuming repo, not beside the skill.
 const EXTERNAL_MD = new Set(['AGENTS.md', 'CLAUDE.md', 'README.md', 'CONTEXT.md', 'SKILL.md', 'CHANGELOG.md', 'THIRD_PARTY_NOTICES.md', 'CONTEXT-MAP.md'])
 const NOT_SKILLS = new Set(['leo-skills'])
+// Project commands come from .agents/leo.md; a skill never names one.
+const HARD_CODED = /\b(npm (test|install|ci|run)|yarn (test|install|run)|pnpm (test|install|run)|cargo (build|test)|pip install|poetry install|go mod download|go test|pytest)\b/
 const UPSTREAMS = [
     ['Superpowers', 'obra/superpowers'],
     ['MattPocock', 'mattpocock/skills'],
@@ -86,9 +88,16 @@ function checkSkill(root, name, listed, canonical, notices, errors) {
         }
     }
 
+    const openai = read(root, `${dir}/agents/openai.yaml`)
+    if (!openai) errors.push(`${dir}/agents/openai.yaml: missing`)
+    else if (!openai.includes(`$${name} `)) errors.push(`${dir}/agents/openai.yaml: default_prompt does not invoke $${name}`)
+
     const siblings = new Set(walk(join(root, dir), join(root, dir)))
     for (const file of walk(join(root, dir), root).filter((f) => f.endsWith('.md'))) {
         const text = read(root, file)
+        text.split('\n').forEach((line, i) => {
+            if (HARD_CODED.test(line)) errors.push(`${file}:${i + 1}: hard-coded command; use a field from .agents/leo.md`)
+        })
         for (const [ref] of text.matchAll(/\bleo-[a-z0-9]+(?:-[a-z0-9]+)*/g)) {
             if (!NOT_SKILLS.has(ref) && !listed.has(ref)) errors.push(`${file}: unknown skill reference ${ref}`)
         }

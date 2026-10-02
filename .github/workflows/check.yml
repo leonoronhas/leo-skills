@@ -15,4 +15,4 @@ jobs:
                   node-version: 22
             - run: node scripts/check.mjs
             - run: node --test 'tests/*.test.mjs' 'ci/pr-review/*.test.mjs'
-            - run: shellcheck install.sh
+            - run: shellcheck install.sh plugins/leo/skills/*/scripts/*

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Print the tree hash of HEAD plus every working-tree change, tracked or
+# untracked (ignored files excluded). Uses a temporary index, so the real
+# index is untouched. On a clean tree it equals HEAD^{tree}.
+#
+# Usage: tree-hash
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+export GIT_INDEX_FILE="$tmp/index"
+git read-tree HEAD
+git add -A
+git write-tree

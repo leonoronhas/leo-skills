@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# Run COMMAND at every commit after the merge-base of BASE_BRANCH, oldest
+# first, in a temporary worktree. A red commit is allowed only when the next
+# commit is green: a failing test landing directly before its fix. The last
+# commit must be green. Exit 1 on any other red commit.
+#
+# Usage: commit-proof [--link PATH]... BASE_BRANCH -- COMMAND
+set -uo pipefail
+link=()
+while [ "${1:-}" = "--link" ]; do
+  link+=("$2")
+  shift 2
+done
+if [ $# -lt 3 ] || [ "$2" != "--" ]; then
+  echo "usage: commit-proof [--link PATH]... BASE_BRANCH -- COMMAND" >&2
+  exit 2
+fi
+base=$1
+shift 2
+cmd="$*"
+root=$(git rev-parse --show-toplevel)
+cd "$root" || exit 2
+merge_base=$(git merge-base "$base" HEAD) || exit 2
+commits=()
+while IFS= read -r sha; do
+  commits+=("$sha")
+done < <(git rev-list --reverse "$merge_base"..HEAD)
+if [ "${#commits[@]}" -eq 0 ]; then
+  echo "commit-proof: no commits after the merge-base"
+  exit 0
+fi
+
+tmp=$(mktemp -d)
+checkout="$tmp/proof"
+# This worktree is created here and removed here; nothing else lives in it.
+trap 'git -C "$root" worktree remove --force "$checkout" > /dev/null 2>&1; rm -rf "$tmp"' EXIT
+git worktree add --detach -q "$checkout" "${commits[0]}" || exit 2
+
+codes=()
+for sha in "${commits[@]}"; do
+  git -C "$checkout" checkout -q --detach "$sha"
+  for path in ${link[@]+"${link[@]}"}; do
+    [ -e "$checkout/$path" ] || ln -s "$root/$path" "$checkout/$path"
+  done
+  (cd "$checkout" && bash -c "$cmd") > /dev/null 2>&1
+  codes+=("$?")
+done
+
+bad=0
+last=$((${#commits[@]} - 1))
+for i in "${!commits[@]}"; do
+  state=green
+  [ "${codes[$i]}" -ne 0 ] && state=red
+  note=""
+  if [ "$state" = red ]; then
+    if [ "$i" -eq "$last" ] || [ "${codes[$((i + 1))]}" -ne 0 ]; then
+      note="  <- red and not fixed by the next commit"
+      bad=1
+    fi
+  fi
+  printf '%s %-5s %s%s\n' "${commits[$i]:0:7}" "$state" "$(git log -1 --format=%s "${commits[$i]}")" "$note"
+done
+exit "$bad"

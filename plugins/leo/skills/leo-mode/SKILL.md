@@ -44,7 +44,7 @@ mkdir -p .agents/leo-mode/<task-slug>
 printf '*\n' > .agents/leo-mode/.gitignore
 ```
 
-It holds `standing.md`, `gates.md`, `decisions.tsv`, `briefs/`, and `reports/`.
+It holds `standing.md`, `gates.md`, `decisions.tsv`, `briefs/`, and `reports/`. Scripts in this skill's `scripts/` directory do the mechanical parts: `log`, `audit`, `base-head`, and `commit-proof`.
 
 ## Flows
 
@@ -218,15 +218,16 @@ A field you cannot fill means the unit is not scoped: do not spawn. Size the bri
 ts	phase	decision	why	evidence	result
 ```
 
-Evidence is a pointer (commit, `file:line`, command, report path), never a paragraph. Before handing back:
+Append rows with `scripts/log <task dir> <phase> <decision> <why> <evidence> <result>`. Evidence is a pointer (commit, `file:line`, command, report path), never a paragraph. Before handing back:
 
-1. Audit the log against what actually happened. Cut rows with no matching action; add forks and reverts that are missing.
+1. Run `scripts/audit <task dir>`: every commit and path in the evidence column must resolve. Then audit the log against what actually happened. Cut rows with no matching action; add forks and reverts that are missing.
 2. The log auditor reads the log and the diff and flags weak evidence, skipped verification, and risky calls.
 
 ## Finish
 
 1. `leo-trust-but-verify`, run by you, never delegated.
-2. Reply, written per `leo-writing`:
+2. `scripts/commit-proof <base-branch> -- <test command>`: every red commit must be followed directly by its green fix (non-negotiable 2).
+3. Reply, written per `leo-writing`:
    - What changed for the person affected, then what the next maintainer inherits.
    - Every claim carries its evidence or a label: measured, inferred, or guess.
    - For bugs: root cause, fix, and the failing-then-green loop output.

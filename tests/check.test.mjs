@@ -12,6 +12,8 @@ const RULE = [
     '<!-- /leo:subagent-model -->',
 ].join('\n')
 
+const OPENAI = "interface:\n    display_name: 'A'\n    default_prompt: 'Apply $leo-a to this task.'\n"
+
 const SKILL = '---\nname: leo-a\ndescription: Does A.\n---\n\n# A\n\n**Original.**\n'
 
 function repo(overrides = {}) {
@@ -21,6 +23,7 @@ function repo(overrides = {}) {
         'AGENTS.md': `# Agents\n\n${RULE}\n`,
         'THIRD_PARTY_NOTICES.md': '# Notices\n',
         'plugins/leo/skills/leo-a/SKILL.md': SKILL,
+        'plugins/leo/skills/leo-a/agents/openai.yaml': OPENAI,
         ...overrides,
     }
     for (const [path, text] of Object.entries(files)) {
@@ -124,4 +127,23 @@ test('only mode ignores other missing skills and scopes leaks', () => {
         'AGENTS.md': `# Agents rotor\n\n${RULE}\n`,
     })
     assert.deepEqual(check(root, { only: 'leo-a' }), [])
+})
+
+test('hard-coded project command in a skill fails', () => {
+    for (const cmd of ['npm install', 'cargo build', 'pip install -r x', 'pytest tests/a.py', 'go mod download']) {
+        const errors = check(repo({ 'plugins/leo/skills/leo-a/SKILL.md': `${SKILL}\nRun \`${cmd}\`.\n` }))
+        assert.ok(errors.some((e) => e.includes('hard-coded command')), `${cmd}: ${errors.join('\n')}`)
+    }
+})
+
+test('adapter field placeholder is not a hard-coded command', () => {
+    const errors = check(repo({ 'plugins/leo/skills/leo-a/SKILL.md': `${SKILL}\nRun the \`test\` command from .agents/leo.md.\n` }))
+    assert.deepEqual(errors, [])
+})
+
+test('missing or mismatched agents/openai.yaml fails', () => {
+    const missing = check(repo({ 'plugins/leo/skills/leo-a/agents/openai.yaml': null }))
+    assert.ok(missing.some((e) => e.includes('openai.yaml')), missing.join('\n'))
+    const wrong = check(repo({ 'plugins/leo/skills/leo-a/agents/openai.yaml': OPENAI.replace('$leo-a', '$leo-b') }))
+    assert.ok(wrong.some((e) => e.includes('openai.yaml')), wrong.join('\n'))
 })

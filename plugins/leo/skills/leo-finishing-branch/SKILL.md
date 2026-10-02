@@ -29,7 +29,7 @@ Read `.agents/leo.md` first. If it does not exist, run `leo-setup`, then continu
 
 ## Step 1: Verify Tests
 
-Run the `test` command from `.agents/leo.md` in full, plus `typecheck` and `lint` when set, on the tree you are about to integrate; an earlier green run does not count. If `test` is blank, ask the user for the command.
+Run the `leo-trust-but-verify` skill's `scripts/verify` on the tree you are about to integrate. It runs `test`, `typecheck`, `lint`, and `build` from `.agents/leo.md` when set; an earlier green run does not count. If `test` is blank, ask the user for the command.
 
 **If anything fails**, report the failures and stop. The menu comes after a green run:
 
@@ -132,19 +132,13 @@ git branch -d <feature-branch>
 
     Any output means uncommitted or untracked files. Stop, list them, and ask the user whether to commit them. Do not continue on a dirty tree; the report key below would not match what gets pushed.
 
-2. Compute the tree hash and validate the report for it:
+2. Validate the report for this tree with the `leo-gauntlet` skill's script:
 
     ```bash
-    tree="$(git rev-parse 'HEAD^{tree}')"
-    report=".agents/gauntlet/$tree.md"
-    if [ -f "$report" ] \
-        && [ "$(grep -m1 '^tree: ' "$report")" = "tree: $tree" ] \
-        && [ "$(grep -m1 '^result: ' "$report")" = 'result: pass' ]; then
-        echo "gauntlet gate: pass ($tree)"
-    else
-        echo "gauntlet gate: MISSING OR NOT PASSING ($tree)"
-    fi
+    <leo-gauntlet dir>/scripts/gate-check "$(git rev-parse 'HEAD^{tree}')"
     ```
+
+    It prints `gauntlet gate: pass (<tree>)` only for a report whose tree matches and whose `result: pass` agrees with its verdict and findings.
 
     On a clean tree, `HEAD^{tree}` is the same hash `leo-gauntlet` keys its report on (a temp index holding HEAD plus all working-tree changes), so a report made before its fixes were committed matches after the commit.
 
@@ -158,7 +152,7 @@ git branch -d <feature-branch>
     # git push origin HEAD:refs/heads/<new-branch>
     ```
 
-    Then create the pull/merge request against `<base-branch>` with the forge's tooling (its CLI if one is available, or the creation URL most forges print when you push), following the repo's PR template and conventions if present. Put the gauntlet report's verdict and per-stage status in the description, and write the description per `leo-writing`. When `tracker` in `.agents/leo.md` is set and the branch or plan names an id matching `id-pattern`, link that issue. Report the URL to the user.
+    Then create the pull/merge request against `<base-branch>` with the forge's tooling (its CLI if one is available, or the creation URL most forges print when you push), following the repo's PR template and conventions if present. Put the gauntlet report's verdict and per-stage status in the description, and write the description per `leo-writing`, running its `scripts/prose-lint` on the description file before creating the PR. When `tracker` in `.agents/leo.md` is set and the branch or plan names an id matching `id-pattern`, link that issue. Report the URL to the user.
 
     If the push is rejected, the remote moved: investigate. Force-push only on the user's explicit request.
 

@@ -44,6 +44,8 @@ BEFORE saying "done", "fixed", "working", "passing", "implemented", "ready to sh
 4. **Match output to claim** — does it actually confirm?
 5. **Only then** make the claim, citing the evidence
 
+For the adapter's checks, run `scripts/verify` from this skill's directory. It runs `typecheck`, `lint`, `test`, and `build` from `.agents/leo.md`, fails on leftover `__*` scratch files, and writes a transcript. Cite its summary lines and transcript path.
+
 A success report from an agent, or a run from earlier in the session, is not evidence; run the command yourself. Any positive claim without fresh command output is NOT YET, whatever the wording.
 
 ## Common Claims → Required Verification

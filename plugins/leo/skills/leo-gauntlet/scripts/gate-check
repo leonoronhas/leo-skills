@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Check the gauntlet report for a tree. Passes only when
+# .agents/gauntlet/<tree>.md exists, its first three lines are the tree,
+# verdict, and result lines, the tree matches, and the result line agrees
+# with the verdict and the findings: pass needs verdict PROVEN and no row
+# open at high or blocker.
+#
+# Usage: gate-check [TREE]
+# Default TREE: the tree-hash of the working tree (HEAD^{tree} when clean).
+set -uo pipefail
+here=$(cd "$(dirname "$0")" && pwd)
+cd "$(git rev-parse --show-toplevel)" || exit 2
+tree=${1:-$("$here/tree-hash")}
+report=".agents/gauntlet/$tree.md"
+
+fail() {
+  echo "gauntlet gate: NOT PASSING ($tree): $1"
+  exit 1
+}
+
+[ -f "$report" ] || fail "no report at $report"
+line1=$(sed -n 1p "$report")
+line2=$(sed -n 2p "$report")
+line3=$(sed -n 3p "$report")
+
+[ "$line1" = "tree: $tree" ] || fail "tree line is '$line1'"
+case "$line2" in
+  "verdict: PROVEN" | "verdict: NOT YET" | "verdict: CAN'T PROVE") ;;
+  *) fail "verdict line is '$line2'" ;;
+esac
+case "$line3" in
+  "result: pass" | "result: fail") ;;
+  *) fail "result line is '$line3'" ;;
+esac
+
+open=$(grep -Eic '^\|[[:space:]]*(high|blocker)[[:space:]]*\|.*\|[[:space:]]*open[[:space:]]*\|[[:space:]]*$' "$report" || true)
+expected=fail
+if [ "$line2" = "verdict: PROVEN" ] && [ "$open" -eq 0 ]; then
+  expected=pass
+fi
+[ "$line3" = "result: $expected" ] || fail "report says $line3 but verdict and findings give result: $expected ($open open high or blocker)"
+[ "$expected" = pass ] || fail "result: fail ($line2, $open open high or blocker)"
+echo "gauntlet gate: pass ($tree)"

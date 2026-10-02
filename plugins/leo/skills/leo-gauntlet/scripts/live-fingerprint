@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Print a hash of the customer-facing diff: HEAD plus every working-tree
+# change, against the merge-base with BASE_BRANCH, limited to PATHSPEC. Any
+# customer-facing edit changes it; edits elsewhere do not.
+#
+# Usage: live-fingerprint BASE_BRANCH [PATHSPEC...]
+# PATHSPEC: the customer-facing entries from .agents/leo.md. With none, the
+# whole diff is hashed.
+set -euo pipefail
+if [ $# -lt 1 ]; then
+  echo "usage: live-fingerprint BASE_BRANCH [PATHSPEC...]" >&2
+  exit 2
+fi
+base=$1
+shift
+cd "$(git rev-parse --show-toplevel)"
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+export GIT_INDEX_FILE="$tmp/index"
+git read-tree HEAD
+git add -A
+git diff --cached "$(git merge-base "$base" HEAD)" -- "$@" | git hash-object --stdin

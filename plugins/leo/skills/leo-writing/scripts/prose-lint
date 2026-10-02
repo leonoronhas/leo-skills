@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Flag the leo-writing patterns a script can catch, outside fenced code
+# blocks: AI vocabulary (rule 3), em and en dashes (rule 9), curly quotes
+# (rule 15), chatbot phrases (rule 16), and placeholders (TBD, TODO, FIXME,
+# "similar to Task N"). Prints FILE:LINE: rule: text. Exit 1 on any flag.
+#
+# Usage: prose-lint FILE...
+set -uo pipefail
+if [ $# -eq 0 ]; then
+  echo "usage: prose-lint FILE..." >&2
+  exit 2
+fi
+status=0
+for file in "$@"; do
+  awk -v file="$file" '
+    function flag(rule) { printf "%s:%d: %s: %s\n", file, NR, rule, $0; found = 1 }
+    /^[ \t]*```/ { fence = !fence; next }
+    fence { next }
+    {
+      low = tolower($0)
+      if (low ~ /(^|[^a-z])(delve|delves|tapestry|pivotal|testament|underscores?|showcases?|showcasing|vibrant|intricate|garner|fostering|seamless|seamlessly|robust)([^a-z]|$)/) flag("rule 3 (AI vocabulary)")
+      if ($0 ~ /\xe2\x80\x94|\xe2\x80\x93/) flag("rule 9 (dash)")
+      if ($0 ~ /\xe2\x80\x9c|\xe2\x80\x9d|\xe2\x80\x98|\xe2\x80\x99/) flag("rule 15 (curly quote)")
+      if (low ~ /i hope this helps|let me know if|certainly!|great question|you.re absolutely right|great catch/) flag("rule 16 (chatbot phrase)")
+      if ($0 ~ /(^|[^A-Za-z])(TBD|TODO|FIXME)([^A-Za-z]|$)/ || low ~ /similar to task [0-9]/) flag("placeholder")
+    }
+    END { exit found ? 1 : 0 }' "$file" || status=1
+done
+exit "$status"

@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# Run the check commands from .agents/leo.md (typecheck, lint, test, build),
+# record each command, its exit code, and the tail of its output, and fail on
+# leftover __* scratch files. Prints one summary line per check. Never runs
+# format, lint-fix, or dev: they rewrite files or never exit.
+#
+# Usage: verify [OUT_FILE]
+# Default OUT_FILE: .agents/verify/<timestamp>.txt (self-ignoring directory).
+set -uo pipefail
+
+adapter=.agents/leo.md
+if [ ! -f "$adapter" ]; then
+  echo "verify: $adapter not found; run leo-setup" >&2
+  exit 2
+fi
+
+out=${1:-}
+if [ -z "$out" ]; then
+  mkdir -p .agents/verify
+  [ -f .agents/verify/.gitignore ] || printf '*\n' > .agents/verify/.gitignore
+  out=".agents/verify/$(date +%Y%m%dT%H%M%S).txt"
+fi
+: > "$out"
+
+field() {
+  awk -v key="$1" '
+    /^## / { inside = ($0 == "## Commands") }
+    inside && index($0, "- " key ":") == 1 {
+      value = substr($0, length("- " key ":") + 1)
+      gsub(/^[ \t]+|[ \t]+$/, "", value)
+      gsub(/^`|`$/, "", value)
+      print value
+      exit
+    }' "$adapter"
+}
+
+status=0
+for name in typecheck lint test build; do
+  cmd=$(field "$name")
+  if [ -z "$cmd" ]; then
+    echo "skip $name (blank)"
+    continue
+  fi
+  log=$(mktemp)
+  bash -c "$cmd" > "$log" 2>&1
+  code=$?
+  { printf '## %s\n$ %s\nexit: %s\n' "$name" "$cmd" "$code"; tail -n 40 "$log"; echo; } >> "$out"
+  rm -f "$log"
+  if [ "$code" -eq 0 ]; then
+    echo "ok $name"
+  else
+    echo "FAIL $name (exit $code)"
+    status=1
+  fi
+done
+
+scratch=$(git ls-files --others --exclude-standard | grep -E '(^|/)__' || true)
+if [ -n "$scratch" ]; then
+  { echo "## scratch"; echo "$scratch"; } >> "$out"
+  echo "FAIL scratch files left behind:"
+  printf '%s\n' "$scratch" | sed 's/^/  /'
+  status=1
+fi
+
+echo "transcript: $out"
+exit "$status"

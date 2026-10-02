@@ -21,14 +21,7 @@ Fields used: `dev`, `dev-url`, `login`, `customer-facing`, `base-branch`. If `de
 
 ## Steps
 
-1. **Fingerprint.** Compute it now (`<customer-facing globs>` are the `customer-facing` entries, quoted; with none, omit the `--` pathspec so the whole diff is hashed):
-
-    ```bash
-    tmp="$(mktemp -d)/index"
-    GIT_INDEX_FILE="$tmp" git read-tree HEAD
-    GIT_INDEX_FILE="$tmp" git add -A
-    GIT_INDEX_FILE="$tmp" git diff --cached "$(git merge-base <base-branch> HEAD)" -- <customer-facing globs> | git hash-object --stdin
-    ```
+1. **Fingerprint.** Compute it now with the `leo-gauntlet` skill's `scripts/live-fingerprint <base-branch> <customer-facing entries, quoted>`. With no entries, pass only the base branch so the whole diff is hashed.
 
 2. **List what to exercise.** Read the diff. Write down each changed customer-facing behavior and the observable result that proves it.
 3. **Server.** Request `dev-url`. Any HTTP response below 500 means a server is already running: reuse it, and do not stop it later. Otherwise run the `dev` command in the background, output to a log file, and poll `dev-url` every 2 seconds. If it has not answered after 120 seconds, stop the server you started and end with `result: fail`, quoting the last 40 lines of the log.
@@ -51,4 +44,4 @@ live-check fingerprint: <hash> result: pass
 live-check fingerprint: <hash> result: fail
 ```
 
-`<hash>` is the step 1 fingerprint. `leo-gauntlet` reads this line to skip a repeat run.
+`<hash>` is the step 1 fingerprint. Also write the full output to `.agents/gauntlet/live-<hash>.txt`, creating the directory with its self-ignoring `.gitignore` if needed. `leo-gauntlet` reads that file to skip a repeat run, so the result survives a restarted session.

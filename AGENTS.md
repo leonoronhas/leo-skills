@@ -12,7 +12,7 @@ This repo is a skill suite, not an app. Skills live in `plugins/leo/skills/leo-<
 **Subagent model.** Use `subagent-model` from `.agents/leo.md` when it is set. Otherwise use one tier below your own model in the same vendor family; if you are already on the smallest tier, or cannot name your own model, use your own model. Delegate only read-heavy, independent work; design, security judgment, and final verification stay with you.
 <!-- /leo:subagent-model -->
 
-- Before committing: `node scripts/check.mjs && node --test 'tests/*.test.mjs' 'ci/pr-review/*.test.mjs' && shellcheck install.sh`.
+- Before committing: `node scripts/check.mjs && node --test 'tests/*.test.mjs' 'ci/pr-review/*.test.mjs' && shellcheck install.sh plugins/leo/skills/*/scripts/*`.
 
 ## Which skill when
 

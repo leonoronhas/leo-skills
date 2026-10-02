@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Append one row to TASK_DIR/decisions.tsv, writing the header on first use.
+# Stamps the UTC time, turns tabs and newlines in cells into spaces, and
+# prefixes a cell starting with =, +, -, or @ with a single quote so a
+# spreadsheet never runs it as a formula.
+#
+# Usage: log TASK_DIR PHASE DECISION WHY EVIDENCE RESULT
+set -euo pipefail
+if [ $# -ne 6 ]; then
+  echo "usage: log TASK_DIR PHASE DECISION WHY EVIDENCE RESULT" >&2
+  exit 2
+fi
+file="$1/decisions.tsv"
+shift
+[ -f "$file" ] || printf 'ts\tphase\tdecision\twhy\tevidence\tresult\n' > "$file"
+
+clean() {
+  local value=${1//$'\t'/ }
+  value=${value//$'\r'/ }
+  value=${value//$'\n'/ }
+  case $value in
+    [=+@-]*) value="'$value" ;;
+  esac
+  printf '%s' "$value"
+}
+
+row=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+for cell in "$@"; do
+  row+=$'\t'$(clean "$cell")
+done
+printf '%s\n' "$row" >> "$file"
