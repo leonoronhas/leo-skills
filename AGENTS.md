@@ -19,6 +19,7 @@ This repo is a skill suite, not an app. Skills live in `plugins/leo/skills/leo-<
 | Trigger | Skill |
 |---|---|
 | First use in a repo, or `.agents/leo.md` missing | `leo-setup` |
+| User invokes `/leo-mode` for autonomous, multi-agent work | `leo-mode` |
 | Before a feature, behavior change, or UI | `leo-brainstorming` |
 | Stress-testing a plan or decision | `leo-grilling` |
 | Spec exists, multi-step work ahead | `leo-writing-plans` |
@@ -29,3 +30,4 @@ This repo is a skill suite, not an app. Skills live in `plugins/leo/skills/leo-<
 | Before opening a PR | `leo-gauntlet` |
 | Before claiming done | `leo-trust-but-verify` |
 | Wrapping up a branch | `leo-finishing-branch` |
+| Writing a reply, PR description, commit message, doc, or code comment | `leo-writing` |

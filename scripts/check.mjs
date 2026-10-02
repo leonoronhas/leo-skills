@@ -23,6 +23,7 @@ const NOT_SKILLS = new Set(['leo-skills'])
 const UPSTREAMS = [
     ['Superpowers', 'obra/superpowers'],
     ['MattPocock', 'mattpocock/skills'],
+    ['pstack', 'backnotprop/pstack'],
 ]
 
 function walk(dir, root, out = []) {

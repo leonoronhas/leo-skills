@@ -89,6 +89,7 @@ Project facts live in `.agents/leo.md`. Use the matching leo-* skill whenever a 
 | Before opening a PR | `leo-gauntlet` |
 | Before claiming done, fixed, or passing | `leo-trust-but-verify` |
 | Wrapping up a branch | `leo-finishing-branch` |
+| Writing a reply, PR description, commit message, doc, or code comment | `leo-writing` |
 <!-- /leo:routing -->
 ```
 

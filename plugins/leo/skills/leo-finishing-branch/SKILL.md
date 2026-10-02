@@ -150,7 +150,7 @@ git branch -d <feature-branch>
     # git push origin HEAD:refs/heads/<new-branch>
     ```
 
-    Then create the pull/merge request against `<base-branch>` with the forge's tooling (its CLI if one is available, or the creation URL most forges print when you push), following the repo's PR template and conventions if present. Put the gauntlet report's verdict and per-stage status in the description. When `tracker` in `.agents/leo.md` is set and the branch or plan names an id matching `id-pattern`, link that issue. Report the URL to the user.
+    Then create the pull/merge request against `<base-branch>` with the forge's tooling (its CLI if one is available, or the creation URL most forges print when you push), following the repo's PR template and conventions if present. Put the gauntlet report's verdict and per-stage status in the description, and write the description per `leo-writing`. When `tracker` in `.agents/leo.md` is set and the branch or plan names an id matching `id-pattern`, link that issue. Report the URL to the user.
 
 Keep the worktree: the user iterates on PR feedback there.
 

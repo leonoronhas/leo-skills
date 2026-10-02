@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Leo Writing'
+    short_description: 'Plain, specific prose without AI tells'
+    default_prompt: 'Apply $leo-writing to this task.'
