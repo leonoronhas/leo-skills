@@ -26,8 +26,10 @@ plan=$1
 [ -f "$plan" ] || { echo "no such plan file: $plan" >&2; exit 2; }
 
 slug=$(basename "$plan" .md)
-[ -n "$slug" ] && [ "$slug" != "." ] && [ "$slug" != ".." ] \
-  || { echo "cannot derive a workspace name from: $plan" >&2; exit 2; }
+if [ -z "$slug" ] || [ "$slug" = "." ] || [ "$slug" = ".." ]; then
+  echo "cannot derive a workspace name from: $plan" >&2
+  exit 2
+fi
 
 root=$(git rev-parse --show-toplevel)
 base="$root/.agents/executing-plans"
