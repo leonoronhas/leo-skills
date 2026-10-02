@@ -1,6 +1,6 @@
 {
     "name": "leo",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Evidence-first engineering skills driven by a per-repo adapter (.agents/leo.md).",
     "author": { "name": "Leo Santos", "url": "https://github.com/leonoronhas" },
     "license": "MIT",

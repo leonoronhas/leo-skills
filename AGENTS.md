@@ -12,6 +12,7 @@ This repo is a skill suite, not an app. Skills live in `plugins/leo/skills/leo-<
 **Subagent model.** Use `subagent-model` from `.agents/leo.md` when it is set. Otherwise use one tier below your own model in the same vendor family; if you are already on the smallest tier, or cannot name your own model, use your own model. Delegate only read-heavy, independent work; design, security judgment, and final verification stay with you.
 <!-- /leo:subagent-model -->
 
+- Every change under `plugins/` bumps `version` in `plugins/leo/.claude-plugin/plugin.json` (patch for fixes, minor for new or removed skills and behavior changes) and adds a matching top entry to `CHANGELOG.md`. `check.mjs` checks the entry; `scripts/version-check.mjs <base>` checks the bump. Merging to `main` tags `v<version>` and publishes the entry as a GitHub release.
 - Before committing: `node scripts/check.mjs && node --test 'tests/*.test.mjs' 'ci/pr-review/*.test.mjs' && shellcheck install.sh plugins/leo/skills/*/scripts/*`.
 
 ## Which skill when

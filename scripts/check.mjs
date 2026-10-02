@@ -3,6 +3,8 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join, relative, sep } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
+import { SEMVER, versionOf } from './semver.mjs'
+
 const SKILLS_DIR = 'plugins/leo/skills'
 const RULE_START = '<!-- leo:subagent-model -->'
 const RULE_END = '<!-- /leo:subagent-model -->'
@@ -111,6 +113,19 @@ function checkSkill(root, name, listed, canonical, notices, errors) {
     }
 }
 
+function checkRelease(root, errors) {
+    const manifest = read(root, 'plugins/leo/.claude-plugin/plugin.json')
+    if (!manifest) return errors.push('plugins/leo/.claude-plugin/plugin.json: missing')
+    const version = versionOf(manifest)
+    if (!SEMVER.test(version ?? '')) errors.push(`plugin.json: ${version} is not a semver version`)
+    const changelog = read(root, 'CHANGELOG.md')
+    if (!changelog) return errors.push('CHANGELOG.md: missing')
+    const top = changelog.match(/^## \[([^\]]+)\](.*)$/m)
+    if (!top) return errors.push('CHANGELOG.md: no "## [version] - YYYY-MM-DD" entry')
+    if (top[1] !== version) errors.push(`CHANGELOG.md: top entry is ${top[1]}, plugin.json is ${version}`)
+    if (!/^ - \d{4}-\d{2}-\d{2}$/.test(top[2])) errors.push('CHANGELOG.md: top entry has no YYYY-MM-DD date')
+}
+
 function checkLeaks(root, files, errors) {
     for (const file of files) {
         if (LEAK_EXEMPT.has(file)) continue
@@ -133,6 +148,8 @@ export function check(root, { only } = {}) {
 
     const names = only ? [only] : [...new Set([...listed, ...skillsOnDisk(root)])].sort()
     for (const name of names) checkSkill(root, name, listed, canonical, notices, errors)
+
+    if (!only) checkRelease(root, errors)
 
     const leakFiles = only ? walk(join(root, SKILLS_DIR, only), root) : walk(root, root)
     checkLeaks(root, leakFiles, errors)

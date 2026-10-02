@@ -14,6 +14,8 @@ const RULE = [
 
 const OPENAI = "interface:\n    display_name: 'A'\n    default_prompt: 'Apply $leo-a to this task.'\n"
 
+const CHANGELOG = '# Changelog\n\n## [1.2.3] - 2026-01-02\n\n### Added\n\n- A.\n\n## [1.2.2] - 2026-01-01\n\n- Old.\n'
+
 const SKILL = '---\nname: leo-a\ndescription: Does A.\n---\n\n# A\n\n**Original.**\n'
 
 function repo(overrides = {}) {
@@ -24,6 +26,8 @@ function repo(overrides = {}) {
         'THIRD_PARTY_NOTICES.md': '# Notices\n',
         'plugins/leo/skills/leo-a/SKILL.md': SKILL,
         'plugins/leo/skills/leo-a/agents/openai.yaml': OPENAI,
+        'plugins/leo/.claude-plugin/plugin.json': '{ "name": "leo", "version": "1.2.3" }\n',
+        'CHANGELOG.md': CHANGELOG,
         ...overrides,
     }
     for (const [path, text] of Object.entries(files)) {
@@ -146,4 +150,24 @@ test('missing or mismatched agents/openai.yaml fails', () => {
     assert.ok(missing.some((e) => e.includes('openai.yaml')), missing.join('\n'))
     const wrong = check(repo({ 'plugins/leo/skills/leo-a/agents/openai.yaml': OPENAI.replace('$leo-a', '$leo-b') }))
     assert.ok(wrong.some((e) => e.includes('openai.yaml')), wrong.join('\n'))
+})
+
+test('changelog top entry must match the plugin version', () => {
+    const errors = check(repo({ 'plugins/leo/.claude-plugin/plugin.json': '{ "version": "1.3.0" }\n' }))
+    assert.ok(errors.some((e) => e.includes('CHANGELOG.md: top entry is 1.2.3, plugin.json is 1.3.0')), errors.join('\n'))
+})
+
+test('missing changelog fails', () => {
+    const errors = check(repo({ 'CHANGELOG.md': null }))
+    assert.ok(errors.some((e) => e.includes('CHANGELOG.md: missing')), errors.join('\n'))
+})
+
+test('plugin version must be semver', () => {
+    const errors = check(repo({ 'plugins/leo/.claude-plugin/plugin.json': '{ "version": "v1.2" }\n' }))
+    assert.ok(errors.some((e) => e.includes('not a semver version')), errors.join('\n'))
+})
+
+test('changelog top entry needs a date', () => {
+    const errors = check(repo({ 'CHANGELOG.md': CHANGELOG.replace('## [1.2.3] - 2026-01-02', '## [1.2.3]') }))
+    assert.ok(errors.some((e) => e.includes('top entry has no YYYY-MM-DD date')), errors.join('\n'))
 })

@@ -128,6 +128,10 @@ Runs on non-draft PRs from the same repo. Skips empty and docs-only diffs, and d
     Without Linear, `#N` GitHub issues are used through the built-in `GITHUB_TOKEN`.
 6. Merge to the base branch. It reviews PRs opened after that.
 
+## Versions
+
+Releases are listed in [CHANGELOG.md](CHANGELOG.md) and tagged `v<version>` on GitHub. The version lives in `plugins/leo/.claude-plugin/plugin.json`.
+
 ## Credits
 
 Some skills adapt MIT-licensed work; each adapted `SKILL.md` names its source. Skills marked **Original** are not adapted.

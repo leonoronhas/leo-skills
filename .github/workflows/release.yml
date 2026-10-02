@@ -1,0 +1,25 @@
+name: release
+on:
+    push:
+        branches: [main]
+permissions:
+    contents: write
+jobs:
+    release:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+            - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+              with:
+                  node-version: 22
+            - name: Tag and publish the version if it is new
+              env:
+                  GH_TOKEN: ${{ github.token }}
+              run: |
+                  version=$(node -p "require('./plugins/leo/.claude-plugin/plugin.json').version")
+                  if gh release view "v$version" > /dev/null 2>&1; then
+                      echo "v$version already released"
+                      exit 0
+                  fi
+                  node scripts/changelog-section.mjs "$version" > notes.md
+                  gh release create "v$version" --target "$GITHUB_SHA" --title "v$version" --notes-file notes.md

@@ -6,7 +6,7 @@
         {
             "name": "leo",
             "source": "./plugins/leo",
-            "description": "24 skills from brainstorming to a pre-PR gauntlet, configured per repo by leo-setup.",
+            "description": "Skills from brainstorming to a pre-PR gauntlet, configured per repo by leo-setup.",
             "category": "engineering",
             "keywords": ["tdd", "code-review", "security", "performance", "planning", "verification"]
         }

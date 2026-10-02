@@ -10,9 +10,13 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+              with:
+                  fetch-depth: 0
             - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
               with:
                   node-version: 22
             - run: node scripts/check.mjs
             - run: node --test 'tests/*.test.mjs' 'ci/pr-review/*.test.mjs'
             - run: shellcheck install.sh plugins/leo/skills/*/scripts/*
+            - if: github.event_name == 'pull_request'
+              run: node scripts/version-check.mjs "origin/${{ github.base_ref }}"
