@@ -82,7 +82,6 @@ Project facts live in `.agents/leo.md`. Use the matching leo-* skill whenever a 
 | Trigger | Skill |
 |---|---|
 | Any bug, regression, error, crash, failing test, or wrong, broken, or slow behavior: first, before reading or editing code | `leo-diagnosing-bugs` |
-| Root-cause work once `leo-diagnosing-bugs` has a red feedback loop | `leo-systematic-debugging` |
 | Before a feature, behavior change, or UI | `leo-brainstorming` |
 | A plan or decision touching a `Risk areas` entry | `leo-grilling` |
 | Spec exists, multi-step work ahead | `leo-writing-plans` |

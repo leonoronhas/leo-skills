@@ -26,7 +26,6 @@ This repo is a skill suite, not an app. Skills live in `plugins/leo/skills/leo-<
 | Plan exists, execute it | `leo-executing-plans` |
 | Writing or changing code | `leo-tdd` |
 | Any bug, regression, error, failing test, or broken or slow behavior | `leo-diagnosing-bugs` (first, always) |
-| Root-cause work once `leo-diagnosing-bugs` has a red loop | `leo-systematic-debugging` |
 | Before opening a PR | `leo-gauntlet` |
 | Before claiming done | `leo-trust-but-verify` |
 | Wrapping up a branch | `leo-finishing-branch` |

@@ -135,28 +135,3 @@ Worktree ready at <full-path>
 Tests passing (<N> tests, 0 failures)
 Ready to implement <feature-name>
 ```
-
-## Quick Reference
-
-| Situation | Action |
-|-----------|--------|
-| Already in linked worktree | Skip creation (Step 0) |
-| In a submodule | Treat as normal repo (Step 0 guard) |
-| Native worktree tool available | Use it (Step 1a) |
-| No native tool | Git worktree fallback (Step 1b) |
-| `worktree-dir` set | Use it (verify ignored) |
-| `worktree-dir` blank | Default `.worktrees/` |
-| Directory not ignored | Self-ignoring `.gitignore` inside it; never edit the repo's `.gitignore` |
-| Permission error on create | Sandbox fallback, work in place |
-| Tests fail during baseline | Report failures + ask |
-| No dependency manifest | Skip dependency install |
-
-## Common Rationalizations
-
-| Excuse | Reality |
-|--------|---------|
-| "I'm obviously not in a worktree - no need to check" | Run Step 0. Harness-created isolation and submodules both fool eyeballing; the detection commands settle it. |
-| "`git worktree add` is quicker than hunting for a native tool" | A native tool (e.g. `EnterWorktree`) owns placement, branching, and cleanup. Bypassing it is the #1 mistake - it creates phantom state your harness can't see or manage. |
-| "The worktree directory is surely ignored already" | Run `git check-ignore`. An unignored worktree directory commits the whole tree into the repo. |
-| "Any directory name works" | An explicit instruction beats the `worktree-dir` field, which beats the `.worktrees/` default. |
-| "The workspace is fresh - baseline tests can wait" | A dirty baseline makes every later failure ambiguous. Run the tests now; proceeding past failures is the user's call. |

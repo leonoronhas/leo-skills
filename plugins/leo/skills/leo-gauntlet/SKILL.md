@@ -33,11 +33,43 @@ Run in this order. Do not reorder; reviews must see final code.
 | # | Stage | Notes |
 |---|---|---|
 | 1 | `leo-simplify` | First. Its edits go in the edit list. |
-| 2 | `leo-code-review`, `leo-security-review`, `leo-performance-review` | One subagent each, in parallel, same diff (`git diff $(git merge-base <base-branch> HEAD)` plus untracked files). Model per the rule above. Each returns findings with severity `blocker`, `high`, `medium` or `low`; map any other scale onto these. |
+| 2 | Review lanes | See below. One subagent per lane, in parallel, on the same diff (`git diff $(git merge-base <base-branch> HEAD)` plus untracked files). |
 | 3 | `leo-live-check` | Conditional; see below. |
 | 4 | `leo-trust-but-verify` | Last. It reruns the checks itself and returns the verdict. Never reuse an earlier verdict. |
 
 A stage that cannot run is reported `not run: <reason>` and makes the result `fail`. Only stage 3 may be skipped.
+
+### Stage 2: review lanes
+
+Tiers, used here and by `leo-mode`:
+
+- `mid`: `subagent-model` when set, otherwise the middle tier of your vendor family.
+- `strong`: the most capable tier in your vendor family that is not its most expensive one.
+- `other-vendor`: a model from a different vendor through its CLI (for example `codex exec`; see `leo-mode`), when one is installed and authenticated. Otherwise `strong`, and the report says "single vendor".
+
+| Lane | Runs when | Reviewer | Verifier must show | Skill |
+|---|---|---|---|---|
+| Bugs | Always | `strong` | A concrete execution path or input that fails | `leo-code-review` finding format, correctness lens: logic, edge cases, error handling, races |
+| Standards | Always | `mid` | The rule ID and its text, matched at `file:line` | `leo-code-review`, Standards axis |
+| Spec | An issue, spec, or plan exists | `mid` | Each acceptance item mapped to diff lines, or flagged missing. The orchestrator verifies this lane. | `leo-code-review`, Spec axis |
+| Security | The diff touches a `Risk areas` entry, auth, webhooks, secrets, dependencies, or agent-instruction files | `strong` | A reachable entry point and who can call it | `leo-security-review` |
+| Performance | The diff touches the data layer, queries, the frontend bundle, or the mobile runtime | `mid` | A measurement: query count, `index-check-command`, `bundle-budget-command`, or timing | `leo-performance-review` |
+| Tests | The diff adds or changes tests, or changes tested code | `mid` | The test fails on the base and passes on the head | `leo-tdd` |
+
+- A lane's verifier spawns only when its reviewer reports a finding at `medium` or above.
+- The verifier rules on each finding: `confirmed`, `refuted`, or `can't tell`, with evidence. Refuted findings are dismissed with the verifier's reason. The orchestrator decides `can't tell`.
+- Sort confirmed findings into buckets, keeping each one's severity:
+  - **Act on**: correctness, security, or maintainability problems a real PR would block on.
+  - **Consider**: legitimate, but unclear whether worth the cost now.
+  - **Noted**: valid, not actionable at this stage.
+  - **Dismissed**: wrong, nitpick, or missing context, with a one-line reason.
+- Filters: a lane that returns only nits means the code is fine; say so. "What if X is null" counts only if a caller can pass null; trace it. "I would have done it differently" is dismissed. More than 5 Act-on items means the filter is too loose. Give lone-model security and correctness findings extra scrutiny before dismissing.
+
+- Each lane returns findings with severity `blocker`, `high`, `medium` or `low`; map any other scale onto these.
+- A lane's verifier comes from a different vendor than its reviewer: `other-vendor`, or `strong` when the reviewer is `other-vendor`.
+- A lane skill run as a lane reviews only its own lens, in one pass, and spawns no subagents of its own.
+- Findings below `medium` get no verifier. They are reported and not auto-fixed.
+- A lane that does not run is listed with its reason (for example "no data-layer paths changed"). Bugs and Standards always run.
 
 ### Live-check skip conditions
 
@@ -61,7 +93,7 @@ Any customer-facing edit since that run, including an auto-fix, changes the fing
 
 After stages 1-4:
 
-1. Confirm each finding yourself: read the code and reproduce or trace it. Fix only confirmed findings.
+1. Fix only findings the lane verifier marked `confirmed`, plus `can't tell` findings you confirm yourself by reading the code and reproducing or tracing them.
 2. Judgment calls (design choice, security tradeoff, behavior change, ambiguous requirement) are reported, never auto-fixed.
 3. Behavior fixes go through `leo-tdd`: failing test first. Simplify and style fixes do not need a new test.
 4. Rerun the stages the fixes touched, then `leo-trust-but-verify` in full.

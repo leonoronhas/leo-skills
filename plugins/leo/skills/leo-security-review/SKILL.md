@@ -25,7 +25,9 @@ When `standards-router` in `.agents/leo.md` is set, read it, load only the files
 
 ## Delegation
 
-Sections 1-8, 10 and 11 are independent reads and may run as parallel subagents, one or a few sections each. Each returns candidate evidence (`file:line`, what it saw). Severity, confidence, and the final finding list stay with you.
+**As a gauntlet lane.** When `leo-gauntlet` runs this skill as its Security lane, read every triggered section yourself in one pass and spawn no subagents.
+
+Outside a lane, sections 1-8, 10 and 11 are independent reads and may run as parallel subagents, one or a few sections each. Each returns candidate evidence (`file:line`, what it saw). Severity, confidence, and the final finding list stay with you.
 
 <!-- leo:subagent-model -->
 **Subagent model.** Use `subagent-model` from `.agents/leo.md` when it is set. Otherwise use one tier below your own model in the same vendor family; if you are already on the smallest tier, or cannot name your own model, use your own model. Delegate only read-heavy, independent work; design, security judgment, and final verification stay with you.

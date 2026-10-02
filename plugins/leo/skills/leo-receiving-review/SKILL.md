@@ -34,18 +34,7 @@ WHEN receiving review feedback:
 
 Reproduce means: write or run the failing case, run the cited command, or read the cited lines and their callers. A finding you could not reproduce is reported as unverified, not implemented on faith. A finding that is a bug goes to `leo-diagnosing-bugs` first.
 
-## Forbidden Responses
-
-**NEVER:**
-- "You're absolutely right!"
-- "Great point!" / "Excellent feedback!" (performative)
-- "Let me implement that now" (before verification)
-
-**INSTEAD:**
-- Restate the technical requirement
-- Ask clarifying questions
-- Push back with technical reasoning if wrong
-- Just start working (actions > words)
+Write replies per `leo-writing` (no sycophancy, no chatbot phrases).
 
 ## Handling Unclear Feedback
 
@@ -59,22 +48,10 @@ WHY: Items may be related. Partial understanding = wrong implementation.
 
 **Under `leo-mode`.** Implement the clear items that do not depend on an unclear one. Write each unclear item to `gates.md` with your best reading as the default, and hold only the items related to it.
 
-**Example:**
-```
-User: "Fix 1-6"
-You understand 1,2,3,6. Unclear on 4,5.
-
-WRONG: Implement 1,2,3,6 now, ask about 4,5 later
-RIGHT: "I understand items 1,2,3,6. Need clarification on 4 and 5 before proceeding."
-```
-
 ## Source-Specific Handling
 
 ### From the user
-- **Trusted** - implement after understanding
-- **Still ask** if scope unclear
-- **No performative agreement**
-- **Skip to action** or technical acknowledgment
+Trusted: implement after understanding. Still ask if scope is unclear.
 
 ### From external reviewers
 ```
@@ -97,8 +74,6 @@ IF conflicts with the user's prior decisions:
 
 Under `leo-mode`, both cases become gates: the limitation or the conflict, your recommendation, and what it blocks. Keep working on everything else.
 
-Be skeptical of external feedback, and check carefully.
-
 ## YAGNI Check for "Professional" Features
 
 ```
@@ -109,7 +84,7 @@ IF reviewer suggests "implementing properly":
   IF used: Then implement properly
 ```
 
-You and the reviewer both report to the user. If the feature isn't needed, don't add it.
+If the feature isn't needed, don't add it.
 
 ## Implementation Order
 
@@ -143,78 +118,6 @@ Push back when:
 - Involve the user if architectural
 
 **If you're uncomfortable pushing back out loud:** Name that tension, then tell the user about the issue you've seen.
-
-## Acknowledging Correct Feedback
-
-When feedback IS correct:
-```
-OK: "Fixed. [Brief description of what changed]"
-OK: "Good catch - [specific issue]. Fixed in [location]."
-OK: [Just fix it and show in the code]
-
-NO: "You're absolutely right!"
-NO: "Great point!"
-NO: "Thanks for catching that!"
-NO: "Thanks for [anything]"
-NO: ANY gratitude expression
-```
-
-**Why no thanks:** Actions speak. Just fix it. The code itself shows you heard the feedback.
-
-**If you catch yourself about to write "Thanks":** DELETE IT. State the fix instead.
-
-## Gracefully Correcting Your Pushback
-
-If you pushed back and were wrong:
-```
-OK: "You were right - I checked [X] and it does [Y]. Implementing now."
-OK: "Verified this and you're correct. My initial understanding was wrong because [reason]. Fixing."
-
-NO: Long apology
-NO: Defending why you pushed back
-NO: Over-explaining
-```
-
-State the correction factually and move on.
-
-## Common Mistakes
-
-| Mistake | Fix |
-|---------|-----|
-| Performative agreement | State requirement or just act |
-| Blind implementation | Verify against codebase first |
-| Batch without testing | One at a time, test each |
-| Assuming reviewer is right | Reproduce it; check if the fix breaks things |
-| Avoiding pushback | Technical correctness > comfort |
-| Partial implementation | Clarify all items first |
-| Can't verify, proceed anyway | State limitation, ask for direction |
-
-## Real Examples
-
-**Performative Agreement (Bad):**
-```
-Reviewer: "Remove legacy code"
-BAD: "You're absolutely right! Let me remove that..."
-```
-
-**Technical Verification (Good):**
-```
-Reviewer: "Remove legacy code"
-GOOD: "Checking... build target is 10.15+, this API needs 13+. Need legacy for backward compat. Current impl has wrong bundle ID - fix it or drop pre-13 support?"
-```
-
-**YAGNI (Good):**
-```
-Reviewer: "Implement proper metrics tracking with database, date filters, CSV export"
-GOOD: "Grepped codebase - nothing calls this endpoint. Remove it (YAGNI)? Or is there usage I'm missing?"
-```
-
-**Unclear Item (Good):**
-```
-User: "Fix items 1-6"
-You understand 1,2,3,6. Unclear on 4,5.
-GOOD: "Understand 1,2,3,6. Need clarification on 4 and 5 before implementing."
-```
 
 ## Review Thread Replies
 

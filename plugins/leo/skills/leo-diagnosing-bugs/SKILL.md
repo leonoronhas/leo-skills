@@ -1,11 +1,11 @@
 ---
 name: leo-diagnosing-bugs
-description: Use BEFORE reading or editing any code whenever the user reports a bug, regression, error, crash, failing test, or wrong, broken, or slow behavior, even when the fix looks obvious. The first step for every bug, ahead of leo-systematic-debugging and leo-tdd. Builds a red feedback loop that reproduces the bug, then diagnoses and hands the fix to leo-tdd.
+description: Use BEFORE reading or editing any code whenever the user reports a bug, regression, error, crash, failing test, or wrong, broken, or slow behavior, even when the fix looks obvious. The first step for every bug, ahead of leo-tdd. Builds a red feedback loop that reproduces the bug, finds the root cause, and hands the fix to leo-tdd.
 ---
 
 # Diagnosing Bugs
 
-**Adapted from:** MattPocock `diagnosing-bugs` (MIT, https://github.com/mattpocock/skills).
+**Adapted from:** MattPocock `diagnosing-bugs` (MIT, https://github.com/mattpocock/skills) and Superpowers `systematic-debugging` (MIT, https://github.com/obra/superpowers).
 
 ## Before you start
 
@@ -38,7 +38,8 @@ Spend disproportionate effort here. **Be aggressive. Be creative. Refuse to give
 7. **Property / fuzz loop.** If the bug is "sometimes wrong output", run 1000 random inputs and look for the failure mode.
 8. **Bisection harness.** If the bug appeared between two known states (commit, dataset, version), automate "boot at state X, check, repeat" so you can `git bisect run` it.
 9. **Differential loop.** Run the same input through old-version vs new-version (or two configs) and diff outputs.
-10. **HITL bash script.** Last resort. If a human must click, drive _them_ with `scripts/hitl-loop.template.sh` so the loop is still structured. Captured output feeds back to you.
+10. **Pollution bisection.** A test passes alone but fails in the suite, or the suite leaves a stray file or state: bisect with `scripts/find-polluter.sh` (see `root-cause-tracing.md`).
+11. **HITL bash script.** Last resort. If a human must click, drive _them_ with `scripts/hitl-loop.template.sh` so the loop is still structured. Captured output feeds back to you.
 
 Build the right feedback loop, and the bug is 90% fixed.
 
@@ -93,6 +94,12 @@ Do not proceed until you have reproduced **and** minimised.
 
 ## Phase 3: Hypothesise
 
+Seed the hypotheses from evidence, not intuition:
+
+- The full error message and stack trace: file paths, line numbers, error codes.
+- Recent changes on the paths in play: `git log` and `git diff`, new dependencies, config, environment.
+- A working sibling: similar code in this repo that works. List every difference between it and the broken path, however small.
+
 Generate **3–5 ranked hypotheses** before testing any of them. Single-hypothesis generation anchors on the first plausible idea.
 
 Each hypothesis must be **falsifiable**: state the prediction it makes.
@@ -112,6 +119,10 @@ Tool preference:
 1. **Debugger / REPL inspection** if the env supports it. One breakpoint beats ten logs.
 2. **Targeted logs** at the boundaries that distinguish hypotheses.
 3. Never "log everything and grep".
+
+**Multi-component systems** (CI to build to deploy, API to service to database): in one run, log what enters and leaves each boundary, including configuration and environment. The run shows which component breaks; dig into that one only.
+
+**Deep in the call stack:** trace the bad value backward to where it originates, per `root-cause-tracing.md`.
 
 **Tag every debug log** with a unique prefix, e.g. `[DEBUG-a4f2]`. Cleanup at the end becomes a single grep. Untagged logs survive; tagged logs die.
 
@@ -134,6 +145,16 @@ If a correct seam exists, through `leo-tdd`:
 3. Apply the fix.
 4. Watch it pass.
 5. Re-run the Phase 1 feedback loop against the original (un-minimised) scenario.
+
+### When the fix does not hold
+
+Return to Phase 3 with the new evidence. Do not stack another fix on top of a failed one.
+
+After **3 failed fixes**, stop fixing. Each fix exposing a new problem somewhere else means the premise is wrong, not the hypothesis. Write down the assumption the 3 fixes shared, check which components actually hold it, and question that assumption or the design itself. Discuss it with the user before a fourth fix. Under `leo-mode`, run a second diagnosis-panel round with that premise as the brief; if it still does not converge, it becomes a gate.
+
+### When there is no root cause in the code
+
+If the evidence shows the cause is environmental, timing-dependent, or external, record what you investigated, add handling for it (a retry, a timeout, a clear error), and add logging for the next occurrence. Most "no root cause" findings are an incomplete investigation, so cite the evidence that rules the code out.
 
 ## Phase 6: Cleanup
 

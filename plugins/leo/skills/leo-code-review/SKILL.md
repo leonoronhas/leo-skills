@@ -70,6 +70,8 @@ When a repo rule and a general smell disagree, the repo rule wins. Skip anything
 
 ### 4. Run both axes in parallel subagents
 
+**As a gauntlet lane.** When `leo-gauntlet` runs this skill as its Bugs, Standards, or Spec lane, run only the axis or lens the lane names, yourself, in one pass. Spawn no subagents.
+
 <!-- leo:subagent-model -->
 **Subagent model.** Use `subagent-model` from `.agents/leo.md` when it is set. Otherwise use one tier below your own model in the same vendor family; if you are already on the smallest tier, or cannot name your own model, use your own model. Delegate only read-heavy, independent work; design, security judgment, and final verification stay with you.
 <!-- /leo:subagent-model -->

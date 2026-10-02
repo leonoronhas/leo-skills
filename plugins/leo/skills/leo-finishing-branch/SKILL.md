@@ -29,7 +29,7 @@ Read `.agents/leo.md` first. If it does not exist, run `leo-setup`, then continu
 
 ## Step 1: Verify Tests
 
-Run the `test` command from `.agents/leo.md` in full, plus `typecheck` and `lint` when set. If `test` is blank, ask the user for the command.
+Run the `test` command from `.agents/leo.md` in full, plus `typecheck` and `lint` when set, on the tree you are about to integrate; an earlier green run does not count. If `test` is blank, ask the user for the command.
 
 **If anything fails**, report the failures and stop. The menu comes after a green run:
 
@@ -112,7 +112,7 @@ git merge <feature-branch>
 
 Merge is not gated on a gauntlet report. Run the gate check from Option 2 and say in the confirmation whether a passing report exists for this tree.
 
-If tests fail on the merged result: stop, leave the worktree and branch in place, and investigate. Nothing has been pushed, so the merge is local and recoverable.
+If tests fail on the merged result (even if the failure looks flaky): stop, leave the worktree and branch in place, and investigate. Nothing has been pushed, so the merge is local and recoverable.
 
 Once the merged result is green: clean up the worktree (Step 6), then delete the branch:
 
@@ -122,7 +122,7 @@ git branch -d <feature-branch>
 
 ### Option 2: Push and Create PR
 
-**Gate: no PR without a passing gauntlet report for this exact tree.** On a detached HEAD the PR is menu option 1; the same gate applies.
+**Gate: no PR without a passing gauntlet report for this exact tree.** The gate has no size exemption. On a detached HEAD the PR is menu option 1; the same gate applies.
 
 1. The tree must be clean:
 
@@ -159,6 +159,8 @@ git branch -d <feature-branch>
     ```
 
     Then create the pull/merge request against `<base-branch>` with the forge's tooling (its CLI if one is available, or the creation URL most forges print when you push), following the repo's PR template and conventions if present. Put the gauntlet report's verdict and per-stage status in the description, and write the description per `leo-writing`. When `tracker` in `.agents/leo.md` is set and the branch or plan names an id matching `id-pattern`, link that issue. Report the URL to the user.
+
+    If the push is rejected, the remote moved: investigate. Force-push only on the user's explicit request.
 
 Keep the worktree: the user iterates on PR feedback there.
 
@@ -225,31 +227,4 @@ Which?
 
 Carry out the choice, then remove the worktree.
 
-**Otherwise:** the host environment owns this workspace. Leave it in place. If your platform provides a workspace-exit tool, use it.
-
-## Quick Reference
-
-| Option | Merge | Push | Gauntlet gate | Keep Worktree | Cleanup Branch |
-|--------|-------|------|---------------|---------------|----------------|
-| 1. Merge locally | yes | - | no | - | yes |
-| 2. Create PR | - | yes | **required** | yes | - |
-| 3. Keep as-is | - | - | no | yes | - |
-| 4. Discard (typed `discard`) | - | - | no | - | yes (force) |
-
-## Common Rationalizations
-
-| Excuse | Reality |
-|--------|---------|
-| "Tests passed earlier this session" | Run the checks on the tree you are about to integrate. A green run only proves the tree it ran on. |
-| "They obviously want it merged" | Integration is the user's decision. Present the menu and wait. |
-| "They picked option 2, so pushing is approved" | The pick selects the option. State the exact push and PR action and wait for a yes. |
-| "The gauntlet passed on an earlier commit" | The report is keyed to the tree hash. Any edit changes the hash; a report for another tree proves nothing. |
-| "The gauntlet's fixes are uncommitted, but the report says pass" | The report matches `HEAD^{tree}` only after the fixes are committed. Dirty tree = no PR. |
-| "The PR is tiny, skip the gauntlet" | The gate has no size exemption. Run `leo-gauntlet`. |
-| "'Yeah, get rid of it' counts as confirmation" | Only the typed word `discard` authorizes deletion. |
-| "The PR is up, so the worktree is clutter now" | PR feedback gets fixed in that worktree. It stays until the work lands. |
-| "This other worktree looks stale, I'll clean it too" | Clean up only worktrees under `worktree-dir`. Everything else belongs to the host. |
-| "Removal refused, `--force` is just finishing the cleanup" | The refusal means files exist only in that worktree. `--force` destroys them permanently. Show the user and ask. |
-| "The merged-result failure is probably flaky" | A failing merged result stops everything. Branch and worktree stay put while you investigate. |
-| "The base branch is obviously the default one" | Confirm the fork point or ask. Merging into the wrong base is expensive to undo. |
-| "The push was rejected, force-push will fix it" | A rejected push means the remote moved. Investigate; force-push only on the user's explicit request. |
+**Otherwise:** the host environment owns this workspace. Leave it in place. Never clean up a worktree outside `worktree-dir`, even one that looks stale. If your platform provides a workspace-exit tool, use it.

@@ -71,7 +71,7 @@ No flow fits: write a short bespoke flow (steps, each ending in a check), log it
 2. Diagnosis panel (below). Its report replaces the Phase 3 checkpoint that shows hypotheses to the user.
 3. Implementer fixes through `leo-tdd`: the minimised repro is the failing test.
 4. Re-run the original Phase 1 loop. It must go green on the original scenario.
-5. `leo-gauntlet`, with stage 2 run as Review lanes (below).
+5. `leo-gauntlet`.
 6. `leo-finishing-branch`.
 
 ### Perf
@@ -80,14 +80,14 @@ No flow fits: write a short bespoke flow (steps, each ending in a check), log it
 2. `leo-diagnosing-bugs` perf branch to build a loop that fails against the target.
 3. Diagnosis panel, with "explain the measured cost" as the symptom.
 4. Implementer fixes; re-measure with the same command. Keep only changes that moved the number.
-5. `leo-gauntlet` with Review lanes, then `leo-finishing-branch`.
+5. `leo-gauntlet`, then `leo-finishing-branch`.
 
 ### Feature
 
 1. `leo-brainstorming`, unless a spec already exists. A plan touching a `Risk areas` entry also gets `leo-grilling`.
 2. `leo-writing-plans`.
 3. `leo-executing-plans`: one implementer per task, reviewed by you.
-4. `leo-gauntlet` with Review lanes.
+4. `leo-gauntlet`.
 5. `leo-finishing-branch`.
 
 ### Refactor
@@ -95,7 +95,7 @@ No flow fits: write a short bespoke flow (steps, each ending in a check), log it
 1. `leo-codebase-design` to name the target shape.
 2. Characterization tests through `leo-tdd` where behavior is not already pinned.
 3. Implementer moves the code; tests stay green at every step.
-4. `leo-simplify`, then `leo-gauntlet` with Review lanes, then `leo-finishing-branch`.
+4. `leo-simplify`, then `leo-gauntlet`, then `leo-finishing-branch`.
 
 ### Investigation
 
@@ -146,7 +146,7 @@ Example in a Claude-family session: `parent` Fable, `strong` Opus, `mid` Sonnet,
 | Diagnostician B | `strong` | Same. |
 | Diagnostician C | `other-vendor` | Same. |
 | Implementer | `mid`; `strong` for cross-cutting, concurrent, or subtle changes | Code and tests, in scope. |
-| Lane reviewer | Per Review lanes | None. |
+| Lane reviewer | Per the lane table in `leo-gauntlet` | None. |
 | Lane verifier | A different vendor from that lane's reviewer: `other-vendor`, or `strong` when the reviewer is `other-vendor` | None. |
 | Log auditor | `other-vendor` | None. |
 
@@ -177,25 +177,7 @@ Input: the red, minimised loop from `leo-diagnosing-bugs` Phase 2.
 
 ## Review lanes
 
-Under this mode, `leo-gauntlet` stage 2 runs these lanes instead of its default three reviewers. Its other stages, auto-fix limits, and report stay as written.
-
-| Lane | Runs when | Reviewer | Verifier must show | Skill |
-|---|---|---|---|---|
-| Bugs | Always | `strong` | A concrete execution path or input that fails | `leo-code-review` finding format, correctness lens: logic, edge cases, error handling, races |
-| Standards | Always | `mid` | The rule ID and its text, matched at `file:line` | `leo-code-review`, Standards axis |
-| Spec | An issue, spec, or plan exists | `mid` | Each acceptance item mapped to diff lines, or flagged missing. You verify this lane. | `leo-code-review`, Spec axis |
-| Security | The diff touches a `Risk areas` entry, auth, webhooks, secrets, dependencies, or agent-instruction files | `strong` | A reachable entry point and who can call it | `leo-security-review` |
-| Performance | The diff touches the data layer, queries, the frontend bundle, or the mobile runtime | `mid` | A measurement: query count, `index-check-command`, `bundle-budget-command`, or timing | `leo-performance-review` |
-| Tests | The diff adds or changes tests, or changes tested code | `mid` | The test fails on the base and passes on the head | `leo-tdd` |
-
-- A lane's verifier spawns only when its reviewer reports a finding at `medium` or above.
-- The verifier rules on each finding: `confirmed`, `refuted`, or `can't tell`, with evidence. Refuted findings are dismissed with the verifier's reason. You decide `can't tell`.
-- Sort confirmed findings into buckets, keeping each one's severity:
-  - **Act on**: correctness, security, or maintainability problems a real PR would block on.
-  - **Consider**: legitimate, but unclear whether worth the cost now.
-  - **Noted**: valid, not actionable at this stage.
-  - **Dismissed**: wrong, nitpick, or missing context, with a one-line reason.
-- Filters: a lane that returns only nits means the code is fine; say so. "What if X is null" counts only if a caller can pass null; trace it. "I would have done it differently" is dismissed. More than 5 Act-on items means you are not filtering hard enough. Give lone-model security and correctness findings extra scrutiny before dismissing.
+`leo-gauntlet` stage 2 runs the review lanes. Under this mode, the Roles tiers above fill its reviewer and verifier slots, and Codex runs as in **Other-vendor calls**. The lanes' findings feed your synthesis and the gauntlet report.
 
 ## Briefs
 
