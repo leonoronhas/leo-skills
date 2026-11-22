@@ -2,6 +2,13 @@
 
 Every change to `plugins/` bumps the version in `plugins/leo/.claude-plugin/plugin.json` and adds an entry here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/). Before 1.0.0, a minor bump may remove or rename skills.
 
+## [0.3.0] - 2026-11-22
+
+### Added
+
+- `leo-untangle-codebase`: a user-invoked, whole-codebase refactor. It lists every hidden link, needless link, surplus piece, and special case in a decision log under the `plans` path, redesigns from first principles, lands one fix per commit against a recorded baseline, and repeats with subagent sweeps until nothing worth fixing is left. It can also remove comments that restate code and tests that cannot catch a bug, when the user opts in. Adapted from caldoai `untangle-codebase`.
+- `check.mjs` requires a `THIRD_PARTY_NOTICES.md` entry for skills adapted from caldoai.
+
 ## [0.2.0] - 2026-10-02
 
 ### Added

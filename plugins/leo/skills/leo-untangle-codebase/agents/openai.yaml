@@ -1,0 +1,6 @@
+interface:
+    display_name: 'Leo Untangle Codebase'
+    short_description: 'Whole-codebase refactor: list every tangle, redesign, fix, repeat'
+    default_prompt: 'Apply $leo-untangle-codebase to this task.'
+policy:
+    allow_implicit_invocation: false
