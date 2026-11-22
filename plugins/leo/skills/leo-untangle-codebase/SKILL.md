@@ -134,8 +134,6 @@ Then run `leo-gauntlet` and `leo-finishing-branch`.
 
 ## Decision log example
 
-<a id="decision-log-example"></a>
-
 The list of problems:
 
 ```md
