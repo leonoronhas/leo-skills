@@ -11,7 +11,7 @@ Evidence-first engineering skills for coding agents. Install, run `leo-setup` on
 | Mode | `leo-mode` |
 | Think | `leo-explain`, `leo-brainstorming`, `leo-grilling`, `leo-domain-modeling`, `leo-codebase-design`, `leo-prototype`, `leo-research` |
 | Plan | `leo-writing-plans` |
-| Build | `leo-executing-plans`, `leo-tdd`, `leo-diagnosing-bugs`, `leo-simplify`, `leo-worktrees`, `leo-resolving-merge-conflicts` |
+| Build | `leo-executing-plans`, `leo-tdd`, `leo-diagnosing-bugs`, `leo-simplify`, `leo-untangle-codebase`, `leo-worktrees`, `leo-resolving-merge-conflicts` |
 | Review | `leo-gauntlet`, `leo-code-review`, `leo-security-review`, `leo-performance-review`, `leo-live-check`, `leo-receiving-review`, `leo-pr-review` |
 | Verify | `leo-trust-but-verify` |
 | Ship | `leo-finishing-branch`, `leo-handoff` |
@@ -139,6 +139,7 @@ Some skills adapt MIT-licensed work; each adapted `SKILL.md` names its source. S
 - [Superpowers](https://github.com/obra/superpowers) by Jesse Vincent (MIT)
 - [MattPocock skills](https://github.com/mattpocock/skills) by Matt Pocock (MIT)
 - [pstack](https://github.com/backnotprop/pstack), mirror of Cursor's pstack by poteto (MIT)
+- [caldoai skills](https://github.com/caldoai/skills) by Maze (MIT)
 
 License texts: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 

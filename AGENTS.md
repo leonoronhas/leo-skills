@@ -21,6 +21,7 @@ This repo is a skill suite, not an app. Skills live in `plugins/leo/skills/leo-<
 |---|---|
 | First use in a repo, or `.agents/leo.md` missing | `leo-setup` |
 | User invokes `/leo-mode` for autonomous, multi-agent work | `leo-mode` |
+| User invokes `/leo-untangle-codebase` for a whole-codebase refactor | `leo-untangle-codebase` |
 | How something works or why it was built this way, before changing it | `leo-explain` |
 | No scripted way to drive the app, or its verify skill drifted | `leo-verification-skill` |
 | Before a feature, behavior change, or UI | `leo-brainstorming` |

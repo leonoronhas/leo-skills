@@ -28,6 +28,7 @@ const UPSTREAMS = [
     ['Superpowers', 'obra/superpowers'],
     ['MattPocock', 'mattpocock/skills'],
     ['pstack', 'backnotprop/pstack'],
+    ['caldoai', 'caldoai/skills'],
 ]
 
 function walk(dir, root, out = []) {

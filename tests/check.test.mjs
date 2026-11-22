@@ -111,6 +111,12 @@ test('pstack attribution without notice fails', () => {
     assert.ok(errors.some((e) => e.includes('backnotprop/pstack not in THIRD_PARTY_NOTICES.md')), errors.join('\n'))
 })
 
+test('caldoai attribution without notice fails', () => {
+    const text = SKILL.replace('**Original.**', '**Adapted from:** caldoai `x` (MIT, https://github.com/caldoai/skills).')
+    const errors = check(repo({ 'plugins/leo/skills/leo-a/SKILL.md': text }))
+    assert.ok(errors.some((e) => e.includes('caldoai/skills not in THIRD_PARTY_NOTICES.md')), errors.join('\n'))
+})
+
 test('subagent mention without rule block fails', () => {
     const errors = check(repo({ 'plugins/leo/skills/leo-a/SKILL.md': `${SKILL}\nSpawn a subagent.\n` }))
     assert.ok(errors.some((e) => e.includes('subagent-model rule missing or differs')), errors.join('\n'))
