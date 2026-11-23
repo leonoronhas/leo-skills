@@ -19,6 +19,8 @@ const LEAKS = [
 // These two files contain the leak patterns on purpose.
 const LEAK_EXEMPT = new Set(['scripts/check.mjs', 'tests/check.test.mjs'])
 const WALK_SKIP = new Set(['.git', 'node_modules'])
+// scripts/build-evals.mjs and `claude plugin eval` write here; none of it is committed.
+const GENERATED_DIR = 'plugins/leo/evals'
 // Files that live in the consuming repo, not beside the skill.
 const EXTERNAL_MD = new Set(['AGENTS.md', 'CLAUDE.md', 'README.md', 'CONTEXT.md', 'SKILL.md', 'CHANGELOG.md', 'THIRD_PARTY_NOTICES.md', 'CONTEXT-MAP.md'])
 const NOT_SKILLS = new Set(['leo-skills'])
@@ -36,8 +38,10 @@ function walk(dir, root, out = []) {
     for (const entry of readdirSync(dir, { withFileTypes: true })) {
         if (WALK_SKIP.has(entry.name)) continue
         const full = join(dir, entry.name)
+        const path = relative(root, full).split(sep).join('/')
+        if (path === GENERATED_DIR) continue
         if (entry.isDirectory()) walk(full, root, out)
-        else out.push(relative(root, full).split(sep).join('/'))
+        else out.push(path)
     }
     return out
 }
