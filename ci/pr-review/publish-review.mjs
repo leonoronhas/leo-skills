@@ -43,6 +43,7 @@ export function escapeInline(value = '') {
         .replace(/@/g, '@\u200b')
         .replace(/(https?):/gi, '$1:\u200b')
         .replace(/(www)\./gi, '$1\u200b.')
+        .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/([\\`*_[\]{}()#!|])/g, '\\$1')
