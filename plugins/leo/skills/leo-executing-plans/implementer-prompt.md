@@ -33,8 +33,8 @@ Dispatch a subagent:
     2. Implement exactly what the task specifies, and verify it works
     3. Self-review (below), then report
 
-    Run only the focused test for what you're changing; the controller runs the
-    full suite.
+    Run the focused test for each slice. Before reporting, run the package-scoped
+    `test` and `typecheck` as `leo-tdd` says; the controller runs the repo-wide checks.
 
     ## Git Belongs to the Controller
 

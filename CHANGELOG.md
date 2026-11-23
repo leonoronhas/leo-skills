@@ -2,6 +2,25 @@
 
 Every change to `plugins/` bumps the version in `plugins/leo/.claude-plugin/plugin.json` and adds an entry here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/). Before 1.0.0, a minor bump may remove or rename skills.
 
+## [0.5.0] - 2026-11-23
+
+### Changed
+
+- `leo-brainstorming`: `leo-grilling` may run before `leo-writing-plans`, matching `leo-writing-plans` and `leo-grilling`.
+- `leo-tdd`: tests or seams named in a plan task count as confirmed seams, so implementer subagents do not wait on a user.
+- `leo-executing-plans`: implementers run the package-scoped `test` and `typecheck` before reporting, as `leo-tdd` says.
+- `leo-mode`, `leo-executing-plans`: ruling formats drop em dashes (`Ruling: <what>. Why: <why>. Cost if wrong: <cost>.`), per `leo-writing` rule 9.
+- `leo-writing`: `wip:` is allowed for a `leo-handoff` pause commit.
+- `leo-pr-review`: the correctness axis is named Bugs, so Standards keeps one meaning across review skills.
+- `leo-brainstorming`, `leo-tdd`, `leo-diagnosing-bugs`, `leo-untangle-codebase`, `leo-executing-plans`, `leo-code-review`, `leo-gauntlet`: pressure wording, numeric output caps, and narration limits removed; the rules they carried stay.
+
+### Fixed
+
+- `leo-mode`: the Codex adapter no longer invokes it implicitly, matching `disable-model-invocation` on Claude.
+- `leo-simplify`, `leo-live-check`: stale integration line and incomplete field list corrected.
+- `leo-receiving-review`, `leo-diagnosing-bugs`, `leo-simplify`: same-file contradictions resolved.
+- `leo-finishing-branch`: emitted prompts follow `leo-writing` rule 9.
+
 ## [0.4.1] - 2026-11-22
 
 ### Changed

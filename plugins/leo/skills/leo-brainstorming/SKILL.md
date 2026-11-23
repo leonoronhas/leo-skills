@@ -12,7 +12,7 @@ description: You MUST use this before any creative work - creating features, bui
 Read `.agents/leo.md` first. If it does not exist, run `leo-setup`, then continue.
 
 <HARD-GATE>
-Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it. This applies to EVERY project regardless of perceived simplicity.
+Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it. This applies to every project, however simple it looks.
 </HARD-GATE>
 
 **Under `leo-mode`.** The run replaces the interview. Answer each clarifying question from the repo, the `tracker` issue, and the code. Pick the approach yourself and log it as a ruling. Have an `other-vendor` subagent grill the written spec with `leo-grilling`. The approval gate applies only when the design touches a `Risk areas` entry or rests on a product or preference call no experiment settles: then write it to `gates.md` with your default and keep working around it. Otherwise continue to `leo-writing-plans`, and list the spec path in the final report.
@@ -23,11 +23,11 @@ Do NOT invoke any implementation skill, write any code, scaffold any project, or
 
 ## Anti-Pattern: "This Is Too Simple To Need A Design"
 
-Every project goes through this process. A todo list, a single-function utility, a config change — all of them. "Simple" projects are where unexamined assumptions cause the most wasted work. The design can be short (a few sentences for truly simple projects), but you MUST present it and get approval.
+Every project goes through this process. A todo list, a single-function utility, a config change — all of them. "Simple" projects are where unexamined assumptions cause the most wasted work. The design can be short (a few sentences for truly simple projects), but present it and get approval.
 
 ## Checklist
 
-You MUST create a task for each of these items and complete them in order:
+Create a task for each of these items and complete them in order:
 
 1. **Explore project context** — check files, docs, the `rules-files` from `.agents/leo.md`, recent commits
 2. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
@@ -38,7 +38,7 @@ You MUST create a task for each of these items and complete them in order:
 7. **User reviews written spec** — ask user to review the spec file before proceeding
 8. **Transition to implementation** — invoke `leo-writing-plans` skill to create implementation plan
 
-**The terminal state is invoking leo-writing-plans.** Do NOT invoke any implementation skill. The ONLY skill you invoke after brainstorming is leo-writing-plans.
+**The terminal state is invoking leo-writing-plans.** Do NOT invoke any implementation skill. The next skill is leo-writing-plans; `leo-grilling` may run first, as `leo-writing-plans` requires, when the change touches a `Risk areas` entry or its success criterion cannot be stated in one sentence.
 
 ## The Process
 
@@ -57,7 +57,7 @@ You MUST create a task for each of these items and complete them in order:
 
 **Presenting the design:**
 - Once you believe you understand what you're building, present the design
-- Scale each section to its complexity: a few sentences if straightforward, up to 200-300 words if nuanced
+- Scale each section to its complexity: a few sentences if straightforward, longer where the design is nuanced
 - Ask after each section whether it looks right so far
 - Cover: architecture, components, data flow, error handling, testing
 - Be ready to go back and clarify if something doesn't make sense
@@ -96,7 +96,7 @@ Wait for the user's response. Only proceed once the user approves.
 
 **Implementation:**
 - Invoke the `leo-writing-plans` skill to create a detailed implementation plan
-- Do NOT invoke any other skill. leo-writing-plans is the next step.
+- Do NOT invoke an implementation skill. leo-writing-plans is the next step, after `leo-grilling` when it applies.
 
 ## Key Principles
 
