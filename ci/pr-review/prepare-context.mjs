@@ -69,7 +69,7 @@ export function isDocumentationPath(path) {
         path.startsWith('.github/leo-pr-review/')
     )
         return false
-    return /(^|\/)docs?\//i.test(path) || /\.(md|mdx|txt)$/i.test(path)
+    return /\.(md|mdx)$/i.test(path)
 }
 
 export function isCriticalPath(path) {

@@ -41,6 +41,7 @@ export function escapeInline(value = '') {
     return String(value)
         .replace(/[\r\n]+/g, ' ')
         .replace(/@/g, '@\u200b')
+        .replace(/\b(https?):/gi, '$1:\u200b')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/([\\`*_[\]{}()#!|])/g, '\\$1')
@@ -229,9 +230,12 @@ export function countBySeverity(findings) {
     })).filter((entry) => entry.count > 0)
 }
 
-export function findStatusComment(comments = []) {
+export function findStatusComment(comments = [], publisherLogins = PUBLISHER_LOGINS) {
     return comments.find(
-        (comment) => comment.user?.type === 'Bot' && comment.body?.includes(MARKER_PREFIX)
+        (comment) =>
+            comment.user?.type === 'Bot' &&
+            publisherLogins.includes(comment.user?.login) &&
+            comment.body?.includes(MARKER_PREFIX)
     )
 }
 

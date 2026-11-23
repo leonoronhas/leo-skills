@@ -117,6 +117,7 @@ export async function validateLocations(result, baseSha, headSha, gitImpl = git)
         if (!changedPaths.has(finding.path)) continue
         if (!lineCache.has(finding.path)) {
             const patch = await gitImpl([
+                '--literal-pathspecs',
                 'diff',
                 '--unified=0',
                 '--no-color',

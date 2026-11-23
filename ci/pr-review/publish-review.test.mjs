@@ -13,6 +13,8 @@ const execFile = promisify(execFileCallback)
 import {
     MARKER_PREFIX,
     MAX_REVIEWS,
+    escapeInline,
+    findStatusComment,
     fingerprintFinding,
     parseReviewsUsed,
     planReviewComments,
@@ -407,7 +409,11 @@ test('the publish step deletes its stale threads and updates its status comment'
                 { id: 13, path: bug.path, line: 4, body: 'a human comment', user: { type: 'User' } }
             ],
             issueComments: [
-                { id: 21, body: `${MARKER_PREFIX} head:old reviews:0 -->`, user: { type: 'Bot' } }
+                {
+                    id: 21,
+                    body: `${MARKER_PREFIX} head:old reviews:0 -->`,
+                    user: { type: 'Bot', login: 'github-actions[bot]' }
+                }
             ]
         }
     })
@@ -584,10 +590,39 @@ test('reads and writes the review tally in the status comment marker', () => {
     assert.equal(
         readReviewsUsed([
             { body: 'a human comment', user: { type: 'User' } },
-            { body: `${MARKER_PREFIX} head:abc reviews:1 -->`, user: { type: 'Bot' } }
+            {
+                body: `${MARKER_PREFIX} head:abc reviews:1 -->`,
+                user: { type: 'Bot', login: 'github-actions[bot]' }
+            }
         ]),
         1
     )
+})
+
+test('stops a URL in model text from autolinking', () => {
+    assert.equal(
+        escapeInline('see https://evil.example and HTTP://other.example'),
+        'see https:​//evil.example and HTTP:​//other.example'
+    )
+    assert.equal(escapeInline('plain text: no link'), 'plain text: no link')
+})
+
+test('reads the tally only from a status comment the publisher wrote', () => {
+    const planted = {
+        id: 1,
+        body: `${MARKER_PREFIX} head:abc reviews:0 -->`,
+        user: { type: 'Bot', login: 'some-other-app[bot]' }
+    }
+    const ours = {
+        id: 2,
+        body: `${MARKER_PREFIX} head:abc reviews:2 -->`,
+        user: { type: 'Bot', login: 'github-actions[bot]' }
+    }
+
+    assert.equal(findStatusComment([planted, ours]), ours)
+    assert.equal(readReviewsUsed([planted, ours]), 2)
+    assert.equal(findStatusComment([planted]), undefined)
+    assert.equal(findStatusComment([planted], ['some-other-app[bot]']), planted)
 })
 
 test('recommends the skills once the last review is spent', () => {
@@ -640,7 +675,11 @@ test('the publish step counts the review it just published', async () => {
         env: reviewedEnv,
         api: {
             issueComments: [
-                { id: 21, body: `${MARKER_PREFIX} head:old reviews:1 -->`, user: { type: 'Bot' } }
+                {
+                    id: 21,
+                    body: `${MARKER_PREFIX} head:old reviews:1 -->`,
+                    user: { type: 'Bot', login: 'github-actions[bot]' }
+                }
             ]
         }
     })
@@ -661,7 +700,11 @@ test('the publish step leaves the tally and the threads alone once the budget is
         api: {
             reviewComments: [botComment(51, 12, renderFindingBody(bug))],
             issueComments: [
-                { id: 61, body: `${MARKER_PREFIX} head:old reviews:2 -->`, user: { type: 'Bot' } }
+                {
+                    id: 61,
+                    body: `${MARKER_PREFIX} head:old reviews:2 -->`,
+                    user: { type: 'Bot', login: 'github-actions[bot]' }
+                }
             ]
         }
     })
@@ -743,7 +786,7 @@ test('the budget step reads the tally off the previous status comment', async ()
                         { body: 'a human comment', user: { type: 'User' } },
                         {
                             body: `${MARKER_PREFIX} head:old reviews:2 -->`,
-                            user: { type: 'Bot' }
+                            user: { type: 'Bot', login: 'github-actions[bot]' }
                         }
                     ]
                 })
