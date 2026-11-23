@@ -2,7 +2,7 @@
 name: leo-untangle-codebase
 description: Untangle a whole codebase in one pass, so agents working in it read less per change, break less without noticing, and debug faster. Lists every hidden link, needless link, surplus piece, and special case, redesigns from first principles, fixes the list, and repeats until reviewers find nothing worth fixing. Use for /leo-untangle-codebase.
 disable-model-invocation: true
-argument-hint: "[optional area or concern to focus on]"
+argument-hint: "[list] [optional area or concern to focus on]"
 ---
 
 # Untangle Codebase
@@ -14,6 +14,8 @@ argument-hint: "[optional area or concern to focus on]"
 Read `.agents/leo.md` first. If it does not exist, run `leo-setup`, then continue.
 
 Start a thorough refactor of this codebase and finish it. Treat it as a goal, not a suggestion. If the user named an area or concern, start there, but follow the links wherever they lead.
+
+**Listing only.** With `list` as the first argument, run step 2 alone: read-only, no changes, no commits. Give it the kept-on-purpose list from the last run as input, so settled items are not raised again. It is cheap enough to run every few features, to see drift early.
 
 Why it is worth doing:
 
@@ -32,7 +34,8 @@ Use the `leo-codebase-design` vocabulary (module, interface, depth, seam, adapte
 
 - Work on a branch off `base-branch`, in a worktree through `leo-worktrees` when the tree is not clean.
 - Record a baseline: run `test`, `typecheck`, `lint`, and `build` from `.agents/leo.md`, and save the results. Every later run is compared against it. A check that was red before you started stays your problem to explain, not to hide.
-- Open the decision log at `<plans>/untangle-<YYYY-MM-DD>.md`, where `<plans>` is the `plans` path. Every list and fix below goes there, so the work survives compaction.
+- Before the first edit of each fix, record what the code does with an oracle: a harness that captures the responses, rendered output, queries, or messages sent for the paths the fix touches. Keep the harness source and its reference output somewhere that outlives the session (a tracked folder or the plans path, never a temp folder), with the exact command to run it. A lost harness cannot be re-run, and a rebuilt one proves less.
+- Open the decision log at `<plans>/untangle-<YYYY-MM-DD>.md`, where `<plans>` is the `plans` path. Every list and fix below goes there, so the work survives compaction. Keep a **kept on purpose** list in it: each thing you deliberately did not change, with the reason. Hand that list to every later reviewer and subagent, so settled items are not raised again.
 
 ## 1. Ask
 
@@ -119,7 +122,11 @@ You're done when:
 - A typical change lands in one place.
 - Every import is reasonable, and nothing imports anything more volatile than itself.
 - Subagents have no issues left that are worth fixing.
-- Intended behavior is the same as when you started, apart from bugs the refactor fixed and logged. Prove it with `leo-trust-but-verify` against the step 0 baseline.
+- Intended behavior is the same as when you started, apart from bugs the refactor fixed and logged. Prove it with `leo-trust-but-verify` against the step 0 baseline, and by re-running every oracle on the final tree and comparing its output to the reference byte for byte.
+
+Findings from subagents and reviewers are claims. Check each against the base commit before acting on it: a finding marked certain can still be wrong.
+
+Prove two outputs equal with a byte compare (`cmp`, a checksum, or the harness's own comparer), never by reading a diff summary: some shells and wrappers summarise `diff`.
 
 Then run `leo-gauntlet` and `leo-finishing-branch`.
 

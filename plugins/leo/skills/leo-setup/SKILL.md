@@ -20,7 +20,8 @@ Read, do not run, unless a step says otherwise. Independent reads may go to suba
 | Look at | Yields |
 |---|---|
 | `package.json` scripts, `Makefile`, `pyproject.toml`, `Cargo.toml`, `go.mod` | `install`, `test`, `lint`, `lint-fix`, `format`, `typecheck`, `build`, `dev` |
-| `.github/workflows/` | Which commands CI enforces; the canonical check names |
+| `.github/workflows/` | Which commands CI enforces; the canonical check names; `ci-runs-checks` |
+| Dev dependencies and scripts for unused-code, cycle, or copy detection | `unused-code`, `cycles`, `copies` |
 | `git symbolic-ref refs/remotes/origin/HEAD` | `base-branch` |
 | AGENTS.md, CLAUDE.md | `rules-files`, any standards router, `formatting-owner` (a commit hook or a command), issue-ID pattern, risk areas already named |
 | `docs/adr/`, `CONTEXT.md` | `adr-dir`, `domain-terms` |
@@ -46,6 +47,8 @@ Always ask, whatever the inspection found:
 Also ask `specs-plans-tracked` (`yes` or `no`) and, for `login` under Live check, keep the default: the agent never types passwords and asks the user to log in.
 
 **Under `leo-mode`.** Do not hold the run on this interview. Fill every field the inspection supports and leave the rest blank; still never guess a command. Write `.agents/leo.md`, then raise one batched gate in `gates.md` with your proposed values for Risk areas, customer-facing globs, `specs-plans-tracked`, the routing block, and the standards download. Until the user answers, treat every changed path as risky and customer-facing, which runs `leo-grilling`, the Security lane, and `leo-live-check` rather than skipping them. Neither the routing block nor the standards download happens before a yes.
+
+`unused-code`, `cycles` and `copies` are the project's own mechanical checks (unused exports, files and dependencies; import cycles; copied code). Fill them only from tools the repo already has; never add a dependency here. `gate` is the one local command that runs everything CI runs. `ci-runs-checks` is `yes` only when CI runs these commands, and `no` when there is no CI or it skips them; `leo-gauntlet` and `leo-code-review` read these fields.
 
 Do not run the proposed commands: `format` and `lint-fix` rewrite files, and `dev` never exits. Confirm each one resolves instead (the script exists in its manifest, or the binary is on `PATH`) and mark any that do not.
 
@@ -146,6 +149,11 @@ Project facts for leo-* skills. Written by `leo-setup`; edit freely. Leave a fie
 - typecheck:
 - build:
 - dev:
+- unused-code:
+- cycles:
+- copies:
+- gate:
+- ci-runs-checks: <yes | no>
 - formatting-owner: <hook | command | none>
 
 ## Git

@@ -31,6 +31,7 @@ Simplify code while preserving exact behavior. No behavior changes — only clar
 - **No performance regression** — verify with benchmarks if critical
 - **One change at a time** — each simplification verified independently
 - **Check before removing, extracting, or renaming.** "unused" code may be a feature flag, a new file can create circular imports, and a rename needs a codebase-wide grep for callers
+- **Check before adding.** Search the repository for an existing helper, constant, type, or user-facing sentence before you write a new one
 
 ## Simplification Patterns
 
@@ -42,6 +43,7 @@ Simplify code while preserving exact behavior. No behavior changes — only clar
 | **Data clumps** | `(accountId, userId, role)` everywhere | `RequestContext` object |
 | **Speculative generality** | `interface Config { retry?: ..., timeout?: ..., ... }` | Remove unused options; add when needed |
 | **Duplicate logic** | Same validation in 3 places | Extract to `validateInput()` |
+| **Restating comment** | A comment that changes only when the code beside it changes | Remove it. Keep comments that state what the code cannot show: a rule and who decided it, a fact about another system, what old data looks like, what a caller must not do, why something that looks wrong is right |
 
 ## Process
 

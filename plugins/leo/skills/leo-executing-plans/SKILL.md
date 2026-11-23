@@ -36,7 +36,7 @@ Use when a plan exists and its tasks are mostly independent. Without a plan, use
 5. Spec compliant and quality approved: append the completion line to the ledger, mark the todo complete.
 6. Otherwise rule on any finding that conflicts with plan text, then run fix round R of 5: R 1-3 resume the implementer, R 4-5 a fresh implementer one tier up. Each round ends with a scoped re-review ([re-review-prompt.md](re-review-prompt.md)).
 7. Findings still open after round 5: adjudicate each. Load-bearing: rule and continue (stop only if every path forward is a guess). Otherwise park it in the ledger with a ruling. Then complete the task.
-8. More tasks: repeat from 2. After the last: triage deferred minors and parked findings, run every adapter command in full, then `leo-trust-but-verify`, collect rulings, delete this plan's workspace, `leo-finishing-branch`.
+8. More tasks: repeat from 2. After the last: triage deferred minors and parked findings, one cross-task pass over the merged result, run every adapter command in full, then `leo-trust-but-verify`, collect rulings, delete this plan's workspace, `leo-finishing-branch`.
 
 ## Setup
 
@@ -81,6 +81,8 @@ Everything you paste into a dispatch prompt, and everything a subagent prints ba
 **Waiting on dispatched subagents:** never poll a wait interface with short timeouts, and never sit in a silent, open-ended wait. While you have local work (ledger updates, packaging the next review, reading reports), keep working; child results arrive on their own. When genuinely idle, wait in bounded stretches (five to ten minutes, where your platform allows); between stretches post one line of status, list your live children, and chase any that finished without reporting.
 
 **Parallel tasks.** One subagent per task; dispatch tasks together only when, per the pre-flight table, they share no file and none consumes an interface another produces. Each dispatch lists the files the task owns. Otherwise dispatch one at a time. Parallel implementers share one working tree, so they run only focused tests and never touch git state. When a batch reports, take the tasks one by one through steps 2 to 5.
+
+When parallel implementers each get their own worktree, they cannot see each other's new helpers, and each runs git there. Brief them to write git commands with an explicit path (`git -C <absolute worktree path> ...`), to confirm the top level and branch (`rev-parse --show-toplevel`, `--abbrev-ref HEAD`) before any branch-changing command, and never to run git in the main checkout. A failed `cd` otherwise runs the command against the main branch.
 
 ### 1. Dispatch the implementer
 
@@ -171,8 +173,9 @@ Then mark the todo complete and move on. Never move on while Critical/Important 
 ## After the Last Task
 
 1. **Triage.** Read the ledger's deferred-minor and parked lines. Any that affects correctness goes out as ONE fix dispatch with the complete list, then one scoped re-review of that fix range. Adjudicate residuals as in the breaker.
-2. **Full checks, by you.** Run every command set in the `Commands` section of `.agents/leo.md` in full on the final tree: `format` only when `formatting-owner` is `command`, then the `leo-trust-but-verify` skill's `scripts/verify` for `lint`, `typecheck`, `test`, and `build`. Reports are claims; these runs are evidence. A failure goes back through a fix dispatch with the complete failure list and a scoped re-review, then you rerun everything.
-3. **Verify.** Run `leo-trust-but-verify` on the branch. Its verdict, not your impression, says whether the work is done.
-4. **Rulings.** Before you delete anything, collect every ledger line containing `Ruling:` (preflight rulings, parked findings, breaker adjudications, all of them) into your final message under "Rulings I made", in the order you made them, each with what it costs if wrong. The list is exhaustive. It is the only place the decisions you took on the user's behalf reach them.
-5. **Clean up.** Delete this plan's workspace (`rm -rf <workspace>`); the git history is the record now. Sibling directories belong to other plans: leave them alone.
-6. **Finish.** Use `leo-finishing-branch`.
+2. **Cross-task pass.** After tasks that ran in parallel have landed, and before the final review, run ONE read-only pass over the merged result that looks only for what two tasks each wrote: duplicate helpers, constants, sentences, and types, and per-task copies of the same check. Fix every finding, through a fix dispatch, before the branch is finished. Each task is locally minimal and globally duplicated; only a pass over the merged tree sees it.
+3. **Full checks, by you.** Run every command set in the `Commands` section of `.agents/leo.md` in full on the final tree: `format` only when `formatting-owner` is `command`, then the `leo-trust-but-verify` skill's `scripts/verify` for `lint`, `typecheck`, `test`, and `build`. Reports are claims; these runs are evidence. A failure goes back through a fix dispatch with the complete failure list and a scoped re-review, then you rerun everything.
+4. **Verify.** Run `leo-trust-but-verify` on the branch. Its verdict, not your impression, says whether the work is done.
+5. **Rulings.** Before you delete anything, collect every ledger line containing `Ruling:` (preflight rulings, parked findings, breaker adjudications, all of them) into your final message under "Rulings I made", in the order you made them, each with what it costs if wrong. The list is exhaustive. It is the only place the decisions you took on the user's behalf reach them.
+6. **Clean up.** Delete this plan's workspace (`rm -rf <workspace>`); the git history is the record now. Sibling directories belong to other plans: leave them alone.
+7. **Finish.** Use `leo-finishing-branch`.

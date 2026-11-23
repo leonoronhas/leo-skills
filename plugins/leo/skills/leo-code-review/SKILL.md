@@ -82,6 +82,8 @@ Spawn both at once. Hand each the full diff, the commit list, and its inputs bel
 
 - Report every violation of a documented rule, citing the rule ID or heading. Separate hard violations from judgment calls.
 - Report smells the rules do not cover, naming the smell and quoting the hunk: duplicated logic, mysterious names, data that travels together but is not a type, repeated switches on the same value, one change forcing edits in many modules.
+- A second home. For each constant, limit, user-facing sentence, type, validation rule, or helper the diff adds, search the whole repository, not the diff, for an existing one. A rule that now lives in two places is a finding; give both locations. Also flag a check order or a status-to-message mapping repeated per route or per screen instead of declared once.
+- A browser or client component that starts importing from a package's root entry, pulling the whole package into the bundle, when a narrow entry exists.
 - List the rule IDs the diff exercises without violating, as one line. On a repo with a `standards-router`, a code diff that exercises none is itself a finding.
 - Apply the scope rule below.
 
@@ -98,7 +100,7 @@ Flag as findings, on either axis:
 
 - Speculative code: options, parameters, hooks, or abstractions with no caller or requirement today.
 - Changes outside the stated task: unrelated refactors, renames, reformatting of untouched lines, drive-by fixes.
-- Orphans the change created and left behind: unused imports, dead branches, unreferenced files.
+- Orphans the change created and left behind: unused imports, dead branches, unreferenced files. Also what the change left dead outside the diff: the old function whose last caller moved, an export nothing imports, a dependency no file uses, a test-only export or parameter. Run the project's unused-code check if it has one.
 
 Basis for these is `scope`.
 

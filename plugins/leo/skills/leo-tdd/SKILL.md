@@ -70,6 +70,12 @@ A **seam** is the public boundary you test at: the interface where you observe b
 
 Ask: "What's the public interface, and which seams should we test?"
 
+Seam rules:
+
+- Production code takes no parameter and exports nothing that only a test uses. When a test needs control, use an override the project already documents (a fake registered through the module's public switch, an environment stub, a stubbed global such as `fetch`, a frozen clock) or a real fixture. An injected clock, or a dependency nothing else can control, is the exception: name it in the seams list.
+- Never replace a parameter with a mock of an internal module path. It ties the test to the file layout, so a move breaks it while behavior is unchanged.
+- Before writing a test helper, look in the project's shared test support for one. A helper a second test file needs moves to shared support; it is not copied.
+
 When the shape of that interface is itself in question (how deep the module is, where the seam belongs, what the interface should expose), invoke `leo-codebase-design` for the vocabulary. It is the shared source of the module, interface, depth, seam, adapter, leverage and locality terms.
 
 ## Anti-patterns
@@ -157,11 +163,13 @@ Same single-file command as RED. Confirm:
 
 The `test` suite scoped to the affected package and the `typecheck` command run once, after the last slice, before reporting. Run whichever of the two the affected package defines. A change with neither runs the check the task names.
 
+**Test added after the code exists** (a gap found in review, a characterization test for code you are not changing; new production code still follows the Iron Law)? Prove it by mutation: break the behavior its title names, see the test fail at that assertion, restore the code. A test that stays green under that mutation asserts nothing; repair it or delete it.
+
 **Other tests fail?** Fix now. The full-repo run (`test`, `typecheck`, `lint`) belongs to whoever integrates the work, after integration, not to a delegated task.
 
 ### Repeat
 
-Next failing test for next slice. Not a batch collected in advance. Every new function/method gets a test; cover edge cases and errors.
+Next failing test for next slice. Not a batch collected in advance. Every new behavior at a confirmed seam gets a test, not every new function: a test per function pushes you to export internals and test them directly. Cover edge cases and errors.
 
 ## After The Slices Are Green
 
@@ -187,7 +195,7 @@ Any of these means: delete the code, start over with TDD.
 - "Need to explore first". Fine; throw the exploration away, then start with TDD.
 - "Test is hard to write" or "TDD will slow me down". Hard to test means hard to use; listen to it. Debugging later is slower.
 - "Existing code has no tests". You are changing it, so add tests for it.
-- Cannot confirm all of: every new function has a test, each test watched failing for the expected reason, minimal code, all tests pass with pristine output, real code over mocks, edge cases and errors covered, confirmed seams, vertical slices, refactoring only after the slices. You skipped TDD. Start over.
+- Cannot confirm all of: every new behavior at a confirmed seam has a test, each test watched failing for the expected reason, minimal code, all tests pass with pristine output, real code over mocks, edge cases and errors covered, confirmed seams, vertical slices, refactoring only after the slices. You skipped TDD. Start over.
 
 ## When Stuck
 
