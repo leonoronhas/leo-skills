@@ -614,6 +614,12 @@ test('stops a URL from autolinking after an underscore, a digit, or as a bare ww
     assert.equal(escapeInline('_WWW.evil.example'), '\\_WWW\u200b.evil.example')
 })
 
+test('escapes an ampersand so an HTML entity cannot rebuild a mention or a tag', () => {
+    assert.equal(escapeInline('hi &commat;octocat'), 'hi &amp;commat;octocat')
+    assert.equal(escapeInline('a && b'), 'a &amp;&amp; b')
+    assert.equal(escapeInline('<b>'), '&lt;b&gt;')
+})
+
 test('reads the tally only from a status comment the publisher wrote', () => {
     const planted = {
         id: 1,
