@@ -15,6 +15,8 @@ Read `.agents/leo.md` first. If it does not exist, run `leo-setup`, then continu
 
 When `standards-router` in `.agents/leo.md` is set, read it, load only the files it routes to for this task, and cite rule IDs per `rule-id-convention` in findings and in the PR description. A deviation from a MUST rule names the rule and the reason where the deviation lives.
 
+The `SEC-NNN` IDs in the sections below are typescript-standards IDs. Cite them only when `rule-id-convention` names that guide; otherwise cite the repo's own rule IDs, or none.
+
 ## Scope
 
 - Fixed point: `git merge-base <base-branch> HEAD` using `base-branch` from `.agents/leo.md`. The user may name another.

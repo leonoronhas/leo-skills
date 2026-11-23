@@ -87,7 +87,7 @@ Only when `mobile-runtime` is set.
 
 ## Rule IDs
 
-When `rule-id-convention` is the `NODE-NNN` / `REACT-NNN` guide, these checks map to:
+When `rule-id-convention` names the typescript-standards IDs (`NODE-NNN`, `REACT-NNN`), these checks map to:
 
 | Check | Rule |
 |---|---|

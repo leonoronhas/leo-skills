@@ -1,5 +1,7 @@
 # CONTEXT.md Format
 
+`CONTEXT.md` below stands for the `domain-terms` file from `.agents/leo.md` (default `CONTEXT.md`).
+
 ## Structure
 
 ```md

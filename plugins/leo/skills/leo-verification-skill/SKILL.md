@@ -35,7 +35,7 @@ If the checkout does not start as-is, fix that or report it precisely first. A s
 
 ### 2. Generate the skill
 
-Write `<project skill folder>/verify-<app>/SKILL.md` with frontmatter (`name: verify-<app>` and a description naming the app, the surface, and when to use it) and these sections, each from what step 1 found, with no placeholders:
+Write `verify-<app>/SKILL.md` in the folder your agent loads project skills from (where an existing project skill lives, when the repo has one) with frontmatter (`name: verify-<app>` and a description naming the app, the surface, and when to use it) and these sections, each from what step 1 found, with no placeholders:
 
 - **Launch**: the exact start command, how to tell it is ready, and teardown.
 - **Doctor**: one read-only check that the instance is worth driving: process up, right build, port owned by this run, sign-in valid. Run it first, and again after anything surprising.
