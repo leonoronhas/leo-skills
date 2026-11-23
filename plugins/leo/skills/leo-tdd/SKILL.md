@@ -50,7 +50,9 @@ When `standards-router` in `.agents/leo.md` is set, read it, load only the files
 NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
 ```
 
-Code written before its test is deleted and rewritten from the failing test, not kept as a reference or adapted, because code written first shapes the test to fit it. Keep it only with the user's permission.
+Code written before its test is deleted and rewritten from the failing test, not kept as a reference or adapted, because code written first shapes the test to fit it.
+
+An exception to this law needs the user's permission. When a failing test cannot be written or run (no test runner, no way to execute it), stop and ask before writing the code.
 
 ## Seams: Where Tests Go (MattPocock)
 

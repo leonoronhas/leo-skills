@@ -2,6 +2,16 @@
 
 Every change to `plugins/` bumps the version in `plugins/leo/.claude-plugin/plugin.json` and adds an entry here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/). Before 1.0.0, a minor bump may remove or rename skills.
 
+## [0.5.1] - 2026-11-23
+
+### Fixed
+
+- `leo-tdd`: an exception to the Iron Law needs the user's permission again. The 0.5.0 rewrite narrowed that rule to keeping pre-written code, and in a repo with no test runner the skill wrote untested code more often.
+- `leo-untangle-codebase`: the finish rule removed in 0.5.0 is back in plain wording, tied to the "You're done when" list.
+- `leo-security-review`, `leo-performance-review`: typescript-standards rule IDs are cited only when `rule-id-convention` names that guide.
+- `leo-domain-modeling`, `leo-codebase-design`: reference files follow `adr-dir` and `domain-terms` instead of hard-coding the defaults.
+- `leo-verification-skill`: says where the generated skill is written.
+
 ## [0.5.0] - 2026-11-23
 
 ### Changed
