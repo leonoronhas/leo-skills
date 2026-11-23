@@ -607,6 +607,13 @@ test('stops a URL in model text from autolinking', () => {
     assert.equal(escapeInline('plain text: no link'), 'plain text: no link')
 })
 
+test('stops a URL from autolinking after an underscore, a digit, or as a bare www host', () => {
+    assert.equal(escapeInline('_https://evil.example'), '\\_https:\u200b//evil.example')
+    assert.equal(escapeInline('1https://evil.example'), '1https:\u200b//evil.example')
+    assert.equal(escapeInline('see www.evil.example'), 'see www\u200b.evil.example')
+    assert.equal(escapeInline('_WWW.evil.example'), '\\_WWW\u200b.evil.example')
+})
+
 test('reads the tally only from a status comment the publisher wrote', () => {
     const planted = {
         id: 1,
