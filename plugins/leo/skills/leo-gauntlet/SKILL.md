@@ -38,13 +38,13 @@ Run in this order. Do not reorder; reviews must see final code.
 | 3 | `leo-live-check` | Conditional; see below. |
 | 4 | `leo-trust-but-verify` | Last. It reruns the checks itself and returns the verdict. Never reuse an earlier verdict. |
 
-A stage that cannot run is reported `not run: <reason>` and makes the result `fail`. Only stage 3 may be skipped.
+A stage that cannot run is reported `not run: <reason>` and makes the result `fail`. Only stage 3, and stage 1b when nothing is configured, may be skipped.
 
 ### Stage 1b: mechanical checks
 
 Run the commands the adapter names, each once, on the current tree: `unused-code` (unused exports, files, dependencies), `cycles` (import cycles), `copies` (copied code, including copied test code; the output is a report to read, not a pass/fail) and any guard tests the project's own rules name. A failing check is a finding at `high`; read each copy report and file what is a real duplicate. Later stages see the tree after these fixes.
 
-When the adapter names none of these, report the stage as `not run: no mechanical checks configured` and suggest adding them to `.agents/leo.md`. Like any `not run` stage, it makes the result `fail` until they are configured or the user rules otherwise.
+When the adapter names none of these, report the stage as `skipped: no mechanical checks configured`, and add one line to the report suggesting they be added to `.agents/leo.md` through `leo-setup`. This does not fail the result. A configured check that cannot run (the command errors, the tool is missing) is `not run` and fails.
 
 When `ci-runs-checks` is `no` or blank, there is no CI gate: the gauntlet's own run is the gate. Run the adapter's `gate` command (the full local check) and put its output in the report.
 

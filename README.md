@@ -84,7 +84,7 @@ Stages run in this order, so reviews see final code.
 | 3 | `leo-live-check` | Customer-facing changes only. |
 | 4 | `leo-trust-but-verify` | Runs last; reruns the checks itself and returns the verdict. |
 
-A stage that cannot run is reported `not run: <reason>` and fails the result. Only stage 3 may be skipped.
+A stage that cannot run is reported `not run: <reason>` and fails the result. Only stage 3, and stage 1b when nothing is configured, may be skipped.
 
 **Auto-fix limits**
 
