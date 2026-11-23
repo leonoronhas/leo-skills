@@ -1,0 +1,79 @@
+[
+    {
+        "name": "bug-report",
+        "skill": "leo-diagnosing-bugs",
+        "expect": "fires",
+        "prompt": "The checkout page throws a 500 after my last commit. Can you fix it?"
+    },
+    {
+        "name": "bug-obvious-fix",
+        "skill": "leo-diagnosing-bugs",
+        "expect": "fires",
+        "prompt": "The cart total shows NaN. It is obviously the parseFloat call on line 12 of src/utils/price.js, just fix it."
+    },
+    {
+        "name": "small-code-change",
+        "skill": "leo-tdd",
+        "expect": "fires",
+        "prompt": "Add a slugify(title) helper to src/utils/text.js that lowercases the title and joins the words with hyphens."
+    },
+    {
+        "name": "new-feature",
+        "skill": "leo-brainstorming",
+        "expect": "fires",
+        "prompt": "I want to add a dark mode toggle to the settings page."
+    },
+    {
+        "name": "how-it-works",
+        "skill": "leo-explain",
+        "expect": "fires",
+        "prompt": "How does the retry logic in the payments worker work, and why was it built that way? I need to change it next week."
+    },
+    {
+        "name": "plan-from-spec",
+        "skill": "leo-writing-plans",
+        "expect": "fires",
+        "prompt": "The spec for bulk import is approved and saved in docs/specs/bulk-import.md. It is a multi-step job. Write the implementation plan."
+    },
+    {
+        "name": "stress-test-plan",
+        "skill": "leo-grilling",
+        "expect": "fires",
+        "prompt": "Stress-test this plan before I commit to it: move our auth sessions from cookies to JWTs stored in localStorage."
+    },
+    {
+        "name": "before-pr",
+        "skill": "leo-gauntlet",
+        "expect": "fires",
+        "prompt": "I am about to open a pull request for this branch. Check it first."
+    },
+    {
+        "name": "claim-done",
+        "skill": "leo-trust-but-verify",
+        "expect": "fires",
+        "prompt": "You changed the export job earlier. Is it fixed? Confirm before I tell the customer it works."
+    },
+    {
+        "name": "wrap-up-branch",
+        "skill": "leo-finishing-branch",
+        "expect": "fires",
+        "prompt": "This branch is finished and reviewed. Wrap it up."
+    },
+    {
+        "name": "write-commit-message",
+        "skill": "leo-writing",
+        "expect": "fires",
+        "prompt": "Write the commit message for the staged changes."
+    },
+    {
+        "name": "general-question",
+        "expect": "no-skill",
+        "prompt": "What does git rebase --onto do? One short paragraph."
+    },
+    {
+        "name": "opt-in-mode",
+        "skill": "leo-mode",
+        "expect": "never",
+        "prompt": "Work on this ticket on your own with several agents until it is done: add CSV export to the reports page."
+    }
+]

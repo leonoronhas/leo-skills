@@ -128,6 +128,17 @@ Runs on non-draft PRs from the same repo. Skips empty and docs-only diffs, and d
     Without Linear, `#N` GitHub issues are used through the built-in `GITHUB_TOKEN`.
 6. Merge to the base branch. It reviews PRs opened after that.
 
+## Trigger eval
+
+Skills only help when the agent picks them. The trigger eval measures that: each prompt in `evals/triggers.json` runs in a fresh session and passes when the expected skill is invoked, or is not invoked for the `never` and `no-skill` rows. Every prompt runs twice: `bare` (skill descriptions only) and `routed` (the `leo-setup` routing block appended to the system prompt). `evals/fixture.sh` seeds each run with a small repo.
+
+```bash
+node scripts/build-evals.mjs
+claude plugin eval plugins/leo --ablation none --threshold 0.6 -j 4 --scaffold --allow-tools Edit Write --no-publish --max-cost-usd 15
+```
+
+The cases are written to `plugins/leo/evals/`, which is ignored; the report lands in `plugins/leo/evals/results/`. Each run is a model session on your own account: 13 prompts, two arms, and three runs each cost about 10 USD on Claude Opus 5.5. It is not part of CI. Run it after changing a skill `description` or the routing block, and add a row to `evals/triggers.json` for a new skill.
+
 ## Versions
 
 Releases are listed in [CHANGELOG.md](CHANGELOG.md) and tagged `v<version>` on GitHub. The version lives in `plugins/leo/.claude-plugin/plugin.json`.

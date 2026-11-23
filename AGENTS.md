@@ -13,6 +13,7 @@ This repo is a skill suite, not an app. Skills live in `plugins/leo/skills/leo-<
 <!-- /leo:subagent-model -->
 
 - Every change under `plugins/` bumps `version` in `plugins/leo/.claude-plugin/plugin.json` (patch for fixes, minor for new or removed skills and behavior changes) and adds a matching top entry to `CHANGELOG.md`. `check.mjs` checks the entry; `scripts/version-check.mjs <base>` checks the bump. Merging to `main` tags `v<version>` and publishes the entry as a GitHub release.
+- After changing a skill `description` or the `leo-setup` routing block, run the trigger eval (README, `Trigger eval`). It costs model usage, so it is not in CI.
 - Before committing: `node scripts/check.mjs && node --test 'tests/*.test.mjs' 'ci/pr-review/*.test.mjs' && shellcheck install.sh plugins/leo/skills/*/scripts/*`.
 
 ## Which skill when

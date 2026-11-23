@@ -81,6 +81,11 @@ test('leak in a skill fails with file and line', () => {
     assert.ok(errors.some((e) => /SKILL\.md:\d+: leak \(rotor\)/.test(e)), errors.join('\n'))
 })
 
+test('generated eval cases and results are not checked', () => {
+    const errors = check(repo({ 'plugins/leo/evals/results/run-1/aggregate-result.json': '{ "cwd": "/home/rotor" }\n' }))
+    assert.deepEqual(errors, [])
+})
+
 test('each leak pattern is caught', () => {
     for (const [text, label] of [
         ['base is staging', 'staging'],
