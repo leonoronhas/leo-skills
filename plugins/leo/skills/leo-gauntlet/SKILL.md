@@ -33,11 +33,20 @@ Run in this order. Do not reorder; reviews must see final code.
 | # | Stage | Notes |
 |---|---|---|
 | 1 | `leo-simplify` | First. Its edits go in the edit list. |
+| 1b | Mechanical checks | Right after simplify, before the review lanes. See below. |
 | 2 | Review lanes | See below. One subagent per lane, in parallel, on the same diff (`git diff $(git merge-base <base-branch> HEAD)` plus untracked files). |
 | 3 | `leo-live-check` | Conditional; see below. |
 | 4 | `leo-trust-but-verify` | Last. It reruns the checks itself and returns the verdict. Never reuse an earlier verdict. |
 
 A stage that cannot run is reported `not run: <reason>` and makes the result `fail`. Only stage 3 may be skipped.
+
+### Stage 1b: mechanical checks
+
+Run the commands the adapter names, each once, on the current tree: `unused-code` (unused exports, files, dependencies), `cycles` (import cycles), `copies` (copied code, including copied test code; the output is a report to read, not a pass/fail) and any guard tests the project's own rules name. A failing check is a finding at `high`; read each copy report and file what is a real duplicate. Later stages see the tree after these fixes.
+
+When the adapter names none of these, report the stage as `not run: no mechanical checks configured` and suggest adding them to `.agents/leo.md`. Like any `not run` stage, it makes the result `fail` until they are configured or the user rules otherwise.
+
+When `ci-runs-checks` is `no` or blank, there is no CI gate: the gauntlet's own run is the gate. Run the adapter's `gate` command (the full local check) and put its output in the report.
 
 ### Stage 2: review lanes
 
@@ -96,7 +105,7 @@ Any customer-facing edit since that run, including an auto-fix, changes the fing
 
 ## Auto-fix loop
 
-After stages 1-4:
+After stages 1-4 (including 1b):
 
 1. Fix only findings the lane verifier marked `confirmed`, plus `can't tell` findings you confirm yourself by reading the code and reproducing or tracing them.
 2. Judgment calls (design choice, security tradeoff, behavior change, ambiguous requirement) are reported, never auto-fixed.
