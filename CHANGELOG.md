@@ -2,6 +2,12 @@
 
 Every change to `plugins/` bumps the version in `plugins/leo/.claude-plugin/plugin.json` and adds an entry here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/). Before 1.0.0, a minor bump may remove or rename skills.
 
+## [0.4.1] - 2026-11-22
+
+### Changed
+
+- `leo-gauntlet`: the mechanical stage is skipped with a suggestion when the adapter names no checks; a configured check that cannot run still fails. This corrects the 0.4.0 behavior, where a missing configuration failed the result.
+
 ## [0.4.0] - 2026-11-22
 
 ### Changed
@@ -10,7 +16,7 @@ Every change to `plugins/` bumps the version in `plugins/leo/.claude-plugin/plug
 - `leo-code-review`: a "second home" check searches the whole repository for an existing constant, limit, sentence, type, rule, or helper, and flags a check order or message mapping repeated per route or screen. The orphan check now includes what the change left dead outside the diff. A client import from a package root when a narrow entry exists is a finding.
 - `leo-simplify`: check before adding, and a smell row for comments that restate the code.
 - `leo-executing-plans`: one read-only cross-task pass over the merged result for duplicates that parallel tasks each wrote, before the final review. Worktree implementers use `git -C <path>` and confirm the top level and branch first.
-- `leo-gauntlet`: stage 1b runs the adapter's unused-code, cycle, and copy checks, and is skipped with a suggestion when none is configured. With no CI, the gauntlet's own run of the local gate is the gate, and the report carries its output.
+- `leo-gauntlet`: stage 1b runs the adapter's unused-code, cycle, and copy checks. With no CI, the gauntlet's own run of the local gate is the gate, and the report carries its output.
 - `leo-setup`: the adapter gains `unused-code`, `cycles`, `copies`, `gate`, and `ci-runs-checks`.
 - `leo-untangle-codebase`: oracles kept with their reference output and re-run at the end, byte-compare equality, a kept-on-purpose list for reviewers, reviewer findings checked against the base, and a read-only `list` mode.
 - `leo-trust-but-verify`: equality claims need a byte compare in the evidence, and "CI will check it" is not evidence without working CI.
