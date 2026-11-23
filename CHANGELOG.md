@@ -2,6 +2,12 @@
 
 Every change to `plugins/` bumps the version in `plugins/leo/.claude-plugin/plugin.json` and adds an entry here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/). Before 1.0.0, a minor bump may remove or rename skills.
 
+## [0.4.1] - 2026-11-22
+
+### Changed
+
+- `leo-gauntlet`: the mechanical stage is skipped with a suggestion when the adapter names no checks; a configured check that cannot run still fails. This corrects the 0.4.0 behavior, where a missing configuration failed the result.
+
 ## [0.4.0] - 2026-11-22
 
 ### Changed
