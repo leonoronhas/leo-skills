@@ -11,7 +11,7 @@ description: Use to prove a customer-facing change works in the running app befo
 
 Read `.agents/leo.md` first. If it does not exist, run `leo-setup`, then continue.
 
-Fields used: `dev`, `dev-url`, `login`, `customer-facing`, `base-branch`. If `dev-url` is blank, ask the user for it; if none is given, end with `result: fail` and say why. Under `leo-mode`, write the missing `dev-url` to `gates.md` instead of asking, end with `result: fail`, and let the run continue on other work.
+Fields used: `dev`, `dev-url`, `login`, `customer-facing`, `verify-skill`, `base-branch`. If `dev-url` is blank, ask the user for it; if none is given, end with `result: fail` and say why. Under `leo-mode`, write the missing `dev-url` to `gates.md` instead of asking, end with `result: fail`, and let the run continue on other work.
 
 ## Rules
 

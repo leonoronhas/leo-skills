@@ -76,7 +76,7 @@ When a repo rule and a general smell disagree, the repo rule wins. Skip anything
 **Subagent model.** Use `subagent-model` from `.agents/leo.md` when it is set. Otherwise use one tier below your own model in the same vendor family; if you are already on the smallest tier, or cannot name your own model, use your own model. Delegate only read-heavy, independent work; design, security judgment, and final verification stay with you.
 <!-- /leo:subagent-model -->
 
-Spawn both at once. Hand each the full diff, the commit list, and its inputs below. Each returns findings in the format above, under 400 words.
+Spawn both at once. Hand each the full diff, the commit list, and its inputs below. Each returns findings in the format above.
 
 **Standards subagent.** Inputs: rules from step 3. Brief:
 

@@ -15,11 +15,11 @@ A bug surfaced mid-task (yours, an implementer's, or a reviewer's) goes to `leo-
 
 Execute a plan by dispatching a fresh implementer subagent per task, a task review (spec compliance + code quality) after each, and integrating the results yourself: you review every diff and you commit. Subagents get isolated context and never inherit your session's history; you build exactly what they need and keep your own context for coordination.
 
-**Narration:** between tool calls, narrate at most one short line. The ledger and the tool results carry the record.
+**Narration:** keep between-call narration brief; the ledger and the tool results carry the record.
 
 **Continuous execution:** Do not pause to check in between tasks. Execute all tasks from the plan without stopping. The only reasons to stop are the four named below, or all tasks complete. "Should I continue?" prompts and progress summaries waste the user's time.
 
-**Rulings, not stalls.** A running plan does not wait on a human. Conflicts, ambiguities, plan defects, a cap you would have asked to exceed: decide them. The spec is the binding authority, the plan is its argument, and your judgment settles what neither answers. Record every decision in the ledger as `Ruling: <what you decided> — <why> — <what it costs if wrong>`, and keep going.
+**Rulings, not stalls.** A running plan does not wait on a human. Conflicts, ambiguities, plan defects, a cap you would have asked to exceed: decide them. The spec is the binding authority, the plan is its argument, and your judgment settles what neither answers. Record every decision in the ledger as `Ruling: <what you decided>. Why: <why>. Cost if wrong: <what it costs>.`, and keep going.
 
 Four things stop you, and only these: an irreversible or destructive operation; a security-sensitive action; a side effect outside this worktree that norms say you ask about first (a merge, a push to a shared branch, a publish); and a plan so broken that every path forward is a guess. For those, stop and ask. Under `leo-mode`, these four are its gates: write them to `gates.md`, and write rulings to `decisions.tsv` instead of the ledger's ruling lines.
 
@@ -155,9 +155,9 @@ Never fix findings yourself in the controller session: controller fixes skip rev
 
 **The breaker.** When round 5's re-review still leaves findings open, stop dispatching. Adjudicate each open finding yourself; you hold the plan and the cross-task context the reviewer lacks:
 
-- **The reviewer is wrong, or the point is contestable:** park it: `Task <N>: parked — <finding> — Ruling: <why the code stands>`. The triage step sees both sides.
+- **The reviewer is wrong, or the point is contestable:** park it: `Task <N>: parked: <finding>. Ruling: <why the code stands>.`. The triage step sees both sides.
 - **Real, but nothing downstream builds on it:** park it the same way, with a ruling that says it is real and deferred.
-- **Real and load-bearing** (a later task builds on it, or it reveals a plan defect): rule on the smallest change that unblocks the dependent work, ledger it as `Task <N>: Ruling: <finding> — <what you decided and why>`, and carry it into the next task's dispatch. Stop only when the defect leaves every path forward a guess.
+- **Real and load-bearing** (a later task builds on it, or it reveals a plan defect): rule on the smallest change that unblocks the dependent work, ledger it as `Task <N>: Ruling: <finding>. Decision: <what you decided and why>.`, and carry it into the next task's dispatch. Stop only when the defect leaves every path forward a guess.
 
 Adjudicate only at the cap; adjudicating earlier to end a loop is pre-judging. Every adjudication is a ledger entry; a silent discard is forbidden.
 

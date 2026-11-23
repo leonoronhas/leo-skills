@@ -114,7 +114,7 @@ If the user chose Tests, do this last, because tests are your regression safety 
 
 ## 5. Check, and repeat until done
 
-Have subagents search for special cases, hidden links, needless links, and surplus, one category each, in parallel. Confirm each finding yourself before it goes on the list, then go back to step 3. **Do not stop until there is nothing worth fixing left.**
+Have subagents search for special cases, hidden links, needless links, and surplus, one category each, in parallel. Confirm each finding yourself before it goes on the list, then go back to step 3.
 
 You're done when:
 

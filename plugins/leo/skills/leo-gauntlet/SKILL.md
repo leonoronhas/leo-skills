@@ -72,7 +72,7 @@ Tiers, used here and by `leo-mode`:
   - **Consider**: legitimate, but unclear whether worth the cost now.
   - **Noted**: valid, not actionable at this stage.
   - **Dismissed**: wrong, nitpick, or missing context, with a one-line reason.
-- Filters: a lane that returns only nits means the code is fine; say so. "What if X is null" counts only if a caller can pass null; trace it. "I would have done it differently" is dismissed. More than 5 Act-on items means the filter is too loose. Give lone-model security and correctness findings extra scrutiny before dismissing.
+- Filters: a lane that returns only nits means the code is fine; say so. "What if X is null" counts only if a caller can pass null; trace it. "I would have done it differently" is dismissed. If most findings land in Act-on, recheck each against the filters above. Give lone-model security and correctness findings extra scrutiny before dismissing.
 
 - Each lane returns findings with severity `blocker`, `high`, `medium` or `low`; map any other scale onto these.
 - A lane's verifier comes from a different vendor than its reviewer: `other-vendor`, or `strong` when the reviewer is `other-vendor`.

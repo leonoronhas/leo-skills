@@ -1,6 +1,6 @@
 ---
 name: leo-tdd
-description: Use before writing or changing any source code, and before creating or editing any test file, for a feature, bug fix, refactor, call-site sweep, or plan task. Test-driven development with Iron Law enforcement (failing test first, minimum code to green, one slice per cycle). Combines Superpowers TDD rigor with MattPocock seam/vertical-slice guidance.
+description: Use before writing or changing any source code, and before creating or editing any test file, for a feature, bug fix, refactor, call-site sweep, or plan task. Test-driven development with Iron Law enforcement (failing test first, minimum code to green, one slice per cycle).
 ---
 
 # Test-Driven Development (TDD)
@@ -18,8 +18,6 @@ A bug fix starts with `leo-diagnosing-bugs`; come here for its fix and regressio
 Write the test first. Watch it fail. Write minimal code to pass.
 
 **Core principle:** If you didn't watch the test fail, you don't know if it tests the right thing.
-
-**Violating the letter of the rules is violating the spirit of the rules.**
 
 ## When to Use
 
@@ -52,21 +50,13 @@ When `standards-router` in `.agents/leo.md` is set, read it, load only the files
 NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
 ```
 
-Write code before the test? Delete it. Start over.
-
-**No exceptions:**
-- Don't keep it as "reference"
-- Don't "adapt" it while writing tests
-- Don't look at it
-- Delete means delete
-
-Implement fresh from tests. No exceptions without the user's permission.
+Code written before its test is deleted and rewritten from the failing test, not kept as a reference or adapted, because code written first shapes the test to fit it. Keep it only with the user's permission.
 
 ## Seams: Where Tests Go (MattPocock)
 
 A **seam** is the public boundary you test at: the interface where you observe behavior without reaching inside. Tests live at seams, never against internals.
 
-**Test only at pre-agreed seams.** Before writing any test, write down the seams under test and confirm them with the user. No test is written at an unconfirmed seam. Under `leo-mode`, record the seams and why as a ruling in `decisions.tsv` instead of asking; the Tests lane reviews them. You can't test everything, so agreeing the seams up front is how testing effort lands on the critical paths and complex logic instead of every edge case.
+**Test only at pre-agreed seams.** Before writing any test, write down the seams under test and confirm them with the user. No test is written at an unconfirmed seam. When a plan task names its tests or seams (a brief from `leo-executing-plans`), those are the confirmed seams. Under `leo-mode`, record the seams and why as a ruling in `decisions.tsv` instead of asking; the Tests lane reviews them. You can't test everything, so agreeing the seams up front is how testing effort lands on the critical paths and complex logic instead of every edge case.
 
 Ask: "What's the public interface, and which seams should we test?"
 
@@ -132,7 +122,7 @@ test('retry works', async () => {
 - Name describes the behavior and shows the intended API
 - Real code (no mocks unless unavoidable)
 
-### Verify RED - Watch It Fail (MANDATORY. Never skip.)
+### Verify RED - Watch It Fail
 
 Run the one test file with the `test` command from `.agents/leo.md`, narrowed to that file, never the whole suite.
 
@@ -153,7 +143,7 @@ Confirm:
 
 Write simplest code to pass the test. Don't add features (options, backoff, config for a retry that only needs "3 times"), refactor other code, or "improve" beyond the test.
 
-### Verify GREEN - Watch It Pass (MANDATORY.)
+### Verify GREEN - Watch It Pass
 
 Same single-file command as RED. Confirm:
 - Test passes

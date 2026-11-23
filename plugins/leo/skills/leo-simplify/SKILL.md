@@ -39,8 +39,8 @@ Simplify code while preserving exact behavior. No behavior changes — only clar
 |---------|--------|-------|
 | **Long function** | 100+ lines, multiple responsibilities | Extract to `calculateX`, `validateY`, `formatZ` |
 | **Deep nesting** | `if (a) { if (b) { if (c) { ... } } }` | Early returns, guard clauses |
-| **Primitive obsession** | `string` for email, phone, ID | `Email`, `PhoneNumber`, `OrderId` types |
-| **Data clumps** | `(accountId, userId, role)` everywhere | `RequestContext` object |
+| **Primitive obsession** | `string` for email, phone, ID | `Email`, `PhoneNumber`, `OrderId` types (internal code only; a public signature stays identical) |
+| **Data clumps** | `(accountId, userId, role)` everywhere | `RequestContext` object (internal code only; a public signature stays identical) |
 | **Speculative generality** | `interface Config { retry?: ..., timeout?: ..., ... }` | Remove unused options; add when needed |
 | **Duplicate logic** | Same validation in 3 places | Extract to `validateInput()` |
 | **Restating comment** | A comment that changes only when the code beside it changes | Remove it. Keep comments that state what the code cannot show: a rule and who decided it, a fact about another system, what old data looks like, what a caller must not do, why something that looks wrong is right |
@@ -67,6 +67,6 @@ When `standards-router` in `.agents/leo.md` is set, read it, load only the files
 
 ## Integration
 
-- Use **in** `leo-code-review` for complexity findings
+- Runs as stage 1 of `leo-gauntlet`, and after green in `leo-tdd`
 - Use **standalone**: "Simplify this file/module"
 - Complements `leo-tdd` (tests verify preservation)

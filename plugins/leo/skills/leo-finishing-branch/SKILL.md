@@ -61,7 +61,7 @@ This determines which menu to show and how cleanup works:
 
 ## Step 3: Determine Base Branch
 
-Use `base-branch` from `.agents/leo.md`. If it is blank, or the branch clearly split from another (the plan, the conversation, or the upstream says so), ask: "This branch split from <your best guess> — is that correct?" Confirm before merging: merging into the wrong base is expensive to undo.
+Use `base-branch` from `.agents/leo.md`. If it is blank, or the branch clearly split from another (the plan, the conversation, or the upstream says so), ask: "This branch split from <your best guess>. Is that correct?" Confirm before merging: merging into the wrong base is expensive to undo.
 
 ## Step 4: Present Options
 
@@ -208,7 +208,7 @@ git -C "$WORKTREE_PATH" status --porcelain -uall
 ```
 
 ```
-Worktree removal refused — these files were never committed:
+Worktree removal refused. These files were never committed:
 
 <file list>
 

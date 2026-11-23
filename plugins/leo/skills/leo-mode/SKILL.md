@@ -204,7 +204,7 @@ A field you cannot fill means the unit is not scoped: do not spawn. Size the bri
 
 ## Autonomy and gates
 
-- Proceed on reversible work. Decide forks yourself and log each as `Ruling: <what> — <why> — <cost if wrong>`.
+- Proceed on reversible work. Decide forks yourself and log each as `Ruling: <what>. Why: <why>. Cost if wrong: <cost>.`.
 - Gates are the only reasons to stop for the user: an irreversible or destructive operation; a security-sensitive action; a side effect outside the worktree (push, merge, publish, deploy, a message, a ticket change); a product or preference call no experiment settles; every path forward is a guess.
 - Write each gate to `gates.md`: the question, the options, your default, what it blocks. Route other work around it. Ask all open gates together, not one at a time.
 - "Going to bed" or "don't stop" keeps the run going; gates still wait for the user.

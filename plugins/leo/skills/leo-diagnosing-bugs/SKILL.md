@@ -11,7 +11,7 @@ description: Use BEFORE reading or editing any code whenever the user reports a 
 
 Read `.agents/leo.md` first. If it does not exist, run `leo-setup`, then continue.
 
-A discipline for hard bugs. Skip phases only when explicitly justified.
+A discipline for every bug. Scale each phase to the bug; skip a phase only when explicitly justified.
 
 When exploring the codebase, read the file at `domain-terms` (if it exists) to get a clear mental model of the relevant modules, and check the records in `adr-dir` for the area you're touching. Run tests, lint, and typecheck with the `test`, `lint`, and `typecheck` commands from `.agents/leo.md`.
 
@@ -25,7 +25,7 @@ If the redacted output is not enough to diagnose the bug, say so and ask the use
 
 **This is the skill.** Everything else is mechanical. If you have a **tight** pass/fail signal for the bug (one that goes red on _this_ bug), you will find the cause; bisection, hypothesis-testing, and instrumentation all just consume it. If you don't have one, no amount of staring at code will save you.
 
-Spend disproportionate effort here. **Be aggressive. Be creative. Refuse to give up.**
+Spend disproportionate effort here. Try several loop types before concluding none works.
 
 ### Ways to construct one, in roughly this order
 

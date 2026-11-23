@@ -51,7 +51,7 @@ WHY: Items may be related. Partial understanding = wrong implementation.
 ## Source-Specific Handling
 
 ### From the user
-Trusted: implement after understanding. Still ask if scope is unclear.
+Trusted as intent: implement after understanding. A factual claim in it (for example, "this is the bug") is still checked against the code. Still ask if scope is unclear.
 
 ### From external reviewers
 ```
