@@ -46,6 +46,8 @@ BEFORE saying "done", "fixed", "working", "passing", "implemented", "ready to sh
 
 For the adapter's checks, run `scripts/verify` from this skill's directory. It runs `typecheck`, `lint`, `test`, and `build` from `.agents/leo.md`, fails on leftover `__*` scratch files, and writes a transcript. Cite its summary lines and transcript path.
 
+A claim of equality ("identical", "unchanged", "same output") needs a byte compare (`cmp` or a checksum) shown in the evidence, not a read of a diff summary. "CI will check it" is not evidence when the project has no working CI: run the local gate and show its output.
+
 A success report from an agent, or a run from earlier in the session, is not evidence; run the command yourself. Any positive claim without fresh command output is NOT YET, whatever the wording.
 
 ## Common Claims → Required Verification
