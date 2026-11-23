@@ -162,6 +162,27 @@ test('drops findings outside the trusted changed paths and lines', async () => {
     assert.deepEqual(validated.findings, [validResult.findings[0]])
 })
 
+test('passes a finding path to git as a literal pathspec, not a glob', async () => {
+    const calls = []
+    const git = async (args) => {
+        calls.push(args)
+        if (args.includes('--name-only')) return Buffer.from('*\0')
+        return Buffer.from('@@ -10,0 +12,1 @@\n+changed\n')
+    }
+
+    await validateLocations(
+        { ...validResult, findings: [{ ...validResult.findings[0], path: '*' }] },
+        'base',
+        'head',
+        git
+    )
+
+    const patchArgs = calls.find((args) => args.includes('--unified=0'))
+    assert.equal(patchArgs.at(-1), '*')
+    assert.ok(patchArgs.includes('--literal-pathspecs'))
+    assert.ok(patchArgs.indexOf('--literal-pathspecs') < patchArgs.indexOf('diff'))
+})
+
 test('names the empty-output cause instead of throwing a JSON parse trace', async () => {
     const scriptPath = fileURLToPath(new URL('./validate-output.mjs', import.meta.url))
 

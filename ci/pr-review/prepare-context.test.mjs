@@ -13,6 +13,7 @@ import {
     extractIssueIds,
     fetchGithubIssue,
     fetchLinearIssue,
+    isDocumentationPath,
     parseNumstat,
     recommendedSkills,
     renderContext,
@@ -82,6 +83,15 @@ test('skips ordinary documentation but reviews agent policy', () => {
     assert.equal(classifyReview(['.agents/skills/review/SKILL.md']).profile, 'critical')
     assert.equal(classifyReview(['.claude/skills/review/SKILL.md']).profile, 'critical')
     assert.equal(classifyReview(['.github/leo-pr-review/review-prompt.md']).profile, 'critical')
+})
+
+test('counts only markdown files as documentation', () => {
+    assert.equal(isDocumentationPath('src/docs/handler.ts'), false)
+    assert.equal(isDocumentationPath('doc/run.sh'), false)
+    assert.equal(isDocumentationPath('requirements.txt'), false)
+    assert.equal(isDocumentationPath('docs/guide.md'), true)
+    assert.equal(isDocumentationPath('README.md'), true)
+    assert.equal(classifyReview(['src/docs/handler.ts']).shouldReview, true)
 })
 
 test('spends low effort normally and escalates risky changes', () => {

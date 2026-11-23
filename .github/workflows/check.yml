@@ -19,4 +19,6 @@ jobs:
             - run: node --test 'tests/*.test.mjs' 'ci/pr-review/*.test.mjs'
             - run: shellcheck install.sh plugins/leo/skills/*/scripts/*
             - if: github.event_name == 'pull_request'
-              run: node scripts/version-check.mjs "origin/${{ github.base_ref }}"
+              env:
+                  BASE_REF: ${{ github.base_ref }}
+              run: node scripts/version-check.mjs "origin/$BASE_REF"
